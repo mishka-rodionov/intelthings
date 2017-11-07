@@ -1,7 +1,9 @@
-package com.intelthings.intelthings;
+package com.intelthings.intelthings.Activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.intelthings.intelthings.R;
 
 public class MainActivity extends AppCompatActivity {
 
