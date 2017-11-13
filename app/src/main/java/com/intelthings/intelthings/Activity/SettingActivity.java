@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.intelthings.intelthings.R;
+import com.intelthings.intelthings.Service.MQTTService;
 
 /**
  * Created by Lab1 on 07.11.2017.
@@ -30,8 +31,11 @@ public class SettingActivity extends AppCompatActivity{
                 setUsername(usernameEditText.getText().toString());
                 setPassword(passwordEditText.getText().toString());
                 setBrokerPort(brokerPortNumberEditText.getText().toString());
+                MQTTService mqttService = new MQTTService(getUsername(), getPassword(), SettingActivity.this);
             }
         };
+
+        connectionButton.setOnClickListener(onClickListener);
     }
 
     public String getPassword() {
