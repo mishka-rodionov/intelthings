@@ -7,36 +7,37 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username"
+        android:text="@string/username"
         android:id="@+id/un" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/username"
+        android:id="@+id/usernameEdtTxt"
         android:inputType="text" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Password"
+        android:text="@string/password"
         android:id="@+id/pw" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/password" />
+        android:id="@+id/passwordEdtTxt" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Port"
+        android:text="@string/brokerPort"
         android:id="@+id/p" />
 
     <EditText
+        android:id="@+id/brokerPortNumberEdtTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/port" />
+        android:text="@string/brokerPortNumber" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -45,18 +46,12 @@
         android:layout_gravity="center">
 
         <Button
+            android:id="@+id/connectBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign in"
-            android:id="@+id/signIn"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:text="@string/btnConnect" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign up"
-            android:id="@+id/signUp"
-            android:layout_gravity="center_vertical" />
     </LinearLayout>
 
 </LinearLayout>

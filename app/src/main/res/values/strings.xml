@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">IntelThings</string>
+    <string name="btnConnect">Connect</string>
+    <string name="brokerPortNumber">1883</string>
+    <string name="brokerPort">Port</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>
