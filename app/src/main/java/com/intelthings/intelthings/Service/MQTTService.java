@@ -49,6 +49,7 @@ public class MQTTService {
         setActivity(activity);
     }
 
+    //Метод для установки соединения с MQTT-брокером
     public void connectMQTTServer(){
         try {
             IMqttToken iMqttToken = getClient().connect(getOptions());

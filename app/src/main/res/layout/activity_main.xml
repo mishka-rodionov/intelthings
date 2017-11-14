@@ -6,7 +6,7 @@
     android:weightSum="1">
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/imageButtonSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_settings_black_24dp" />
