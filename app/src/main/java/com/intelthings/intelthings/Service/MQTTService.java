@@ -3,6 +3,8 @@ package com.intelthings.intelthings.Service;
 import android.app.Activity;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
@@ -11,11 +13,11 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
  */
 
 public class MQTTService {
-
+    //Конструктор по умолчанию
     public MQTTService(){
 
     }
-
+    //Тестовый конструктор для связи с брокером cloudmqtt
     public MQTTService(String mqttUsername, String mqttPassword, Activity activity){
         setMqttUsername(mqttUsername);
         setMqttPassword(mqttPassword);
@@ -30,6 +32,8 @@ public class MQTTService {
         setActivity(activity);
     }
 
+    //Основной конструктор, использует данные из SettingActivity. создает обект по указанным
+    //username, password, номер порта брокера, адресу брокера и активити из оторого происходит вызов
     public MQTTService(String mqttUsername, String mqttPassword, String mqttBrokerPortNumber,
                        String mqttBrokerURL, Activity activity){
         setMqttUsername(mqttUsername);
@@ -43,6 +47,26 @@ public class MQTTService {
         getOptions().setUserName(getMqttUsername());
         getOptions().setPassword(getMqttPassword().toCharArray());
         setActivity(activity);
+    }
+
+    public void connectMQTTServer(){
+        try {
+            IMqttToken iMqttToken = getClient().connect(getOptions());
+            IMqttActionListener iMqttActionListener = new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    System.out.println("Connection success");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    System.out.println("Connection failed");
+                }
+            };
+            iMqttToken.setActionCallback(iMqttActionListener);
+        }catch (Exception e){
+
+        }
     }
 
     //Getter & setter

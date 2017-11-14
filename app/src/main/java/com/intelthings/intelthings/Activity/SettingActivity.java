@@ -20,9 +20,9 @@ public class SettingActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_activity);
 
-        usernameEditText = (EditText) findViewById(R.id.usernameEdtTxt);                    //Инициализация техтового поля юзернэйма
-        passwordEditText = (EditText) findViewById(R.id.passwordEdtTxt);                    //Инициализация техтового поля пароля
-        brokerPortNumberEditText = (EditText) findViewById(R.id.brokerPortNumberEdtTxt);    //Инициализация техтового поля рабочего порта брокера
+        usernameEditText = (EditText) findViewById(R.id.usernameEdtTxt);                    //Инициализация текстового поля юзернэйма
+        passwordEditText = (EditText) findViewById(R.id.passwordEdtTxt);                    //Инициализация текстового поля пароля
+        brokerPortNumberEditText = (EditText) findViewById(R.id.brokerPortNumberEdtTxt);    //Инициализация текстового поля рабочего порта брокера
         connectionButton = (Button) findViewById(R.id.connectBtn);                          //Инициализация кнопки соединения с брокером
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -32,6 +32,7 @@ public class SettingActivity extends AppCompatActivity{
                 setPassword(passwordEditText.getText().toString());
                 setBrokerPort(brokerPortNumberEditText.getText().toString());
                 MQTTService mqttService = new MQTTService(getUsername(), getPassword(), SettingActivity.this);
+                mqttService.connectMQTTServer();
             }
         };
 
