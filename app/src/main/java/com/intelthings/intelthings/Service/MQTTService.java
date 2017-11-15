@@ -4,15 +4,22 @@ import android.app.Activity;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+//import org.eclipse.paho.client.mqttv3.IM
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.sql.SQLOutput;
 
 /**
  * Created by Lab1 on 07.11.2017.
  */
 
-public class MQTTService {
+public class MQTTService implements MqttCallback {
     //Конструктор по умолчанию
     public MQTTService(){
 
@@ -30,6 +37,7 @@ public class MQTTService {
         getOptions().setUserName(getMqttUsername());
         getOptions().setPassword(getMqttPassword().toCharArray());
         setActivity(activity);
+        getClient().setCallback(this);      //Вызов данного метода необходим для оформления подписки.
     }
 
     //Основной конструктор, использует данные из SettingActivity. создает обект по указанным
@@ -47,6 +55,7 @@ public class MQTTService {
         getOptions().setUserName(getMqttUsername());
         getOptions().setPassword(getMqttPassword().toCharArray());
         setActivity(activity);
+        getClient().setCallback(this);
     }
 
     //Метод для установки соединения с MQTT-брокером
@@ -57,17 +66,66 @@ public class MQTTService {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     System.out.println("Connection success");
+                    System.out.println("ClientID = " + getMqttClientID());
+                    System.out.println("Server URI = " + getClient().getServerURI());
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     System.out.println("Connection failed");
                 }
+
             };
             iMqttToken.setActionCallback(iMqttActionListener);
         }catch (Exception e){
-
+            System.out.println(e.toString());
         }
+    }
+
+    //Метод для публикации сообщений
+    public void publishMQTTMessage(){
+        MqttMessage message = new MqttMessage("TestPayload".getBytes());
+        try {
+            getClient().publish("testTopic", message);
+        } catch (MqttException e) {
+            System.out.println("Publish failed.");
+            e.printStackTrace();
+        }
+    }
+
+    //Метод для подписки на топик
+    public void subscribeToTopic(){
+        try {
+            getClient().subscribe("recieveTopic", 0, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    System.out.println("Subscribed!");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    System.out.println("Failed to subscribe");
+                }
+            });
+        } catch (MqttException ex){
+            System.err.println("Exception whilst subscribing");
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void connectionLost(Throwable cause) {
+
+    }
+
+    @Override
+    public void messageArrived(String topic, MqttMessage message) throws Exception {
+        System.out.println("Subscribe payload = " + message);
+    }
+
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken token) {
+
     }
 
     //Getter & setter

@@ -24,19 +24,47 @@ public class SettingActivity extends AppCompatActivity{
         passwordEditText = (EditText) findViewById(R.id.passwordEdtTxt);                    //Инициализация текстового поля пароля
         brokerPortNumberEditText = (EditText) findViewById(R.id.brokerPortNumberEdtTxt);    //Инициализация текстового поля рабочего порта брокера
         connectionButton = (Button) findViewById(R.id.connectBtn);                          //Инициализация кнопки соединения с брокером
+        publishButton = (Button) findViewById(R.id.publishBtn);
+        subscribeButton = (Button) findViewById(R.id.subscribeBtn);
+
+        publishButton.setVisibility(View.INVISIBLE);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setUsername(usernameEditText.getText().toString());
-                setPassword(passwordEditText.getText().toString());
-                setBrokerPort(brokerPortNumberEditText.getText().toString());
-                MQTTService mqttService = new MQTTService(getUsername(), getPassword(), SettingActivity.this);
-                mqttService.connectMQTTServer();
+                switch(v.getId()){
+                    case R.id.connectBtn:
+                        setUsername(usernameEditText.getText().toString());
+                        setPassword(passwordEditText.getText().toString());
+                        setBrokerPort(brokerPortNumberEditText.getText().toString());
+                        mqttService = new MQTTService(getUsername(), getPassword(), SettingActivity.this);
+                        mqttService.connectMQTTServer();
+                        publishButton.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.publishBtn:
+                        try{
+                            mqttService.publishMQTTMessage();
+                        }catch (NullPointerException e){
+                            e.printStackTrace();
+                            System.out.println("MQTTservice object not created.");
+                        }
+                        break;
+                    case R.id.subscribeBtn:
+                        try{
+                            mqttService.subscribeToTopic();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            System.out.println("trouble to subscribe");
+                        }
+                        break;
+                }
+
             }
         };
 
         connectionButton.setOnClickListener(onClickListener);
+        publishButton.setOnClickListener(onClickListener);
+        subscribeButton.setOnClickListener(onClickListener);
     }
 
     public String getPassword() {
@@ -67,6 +95,9 @@ public class SettingActivity extends AppCompatActivity{
     public EditText passwordEditText;
     public EditText brokerPortNumberEditText;
     public Button connectionButton;
+    public Button publishButton;
+    public Button subscribeButton;
+    public MQTTService mqttService;
 
     private String password;
     private String username;

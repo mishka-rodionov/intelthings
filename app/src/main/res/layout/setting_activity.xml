@@ -11,10 +11,11 @@
         android:id="@+id/un" />
 
     <EditText
+        android:id="@+id/usernameEdtTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/usernameEdtTxt"
-        android:inputType="text" />
+        android:inputType="text"
+        android:text="pavgnvtr" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,9 +24,10 @@
         android:id="@+id/pw" />
 
     <EditText
+        android:id="@+id/passwordEdtTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/passwordEdtTxt" />
+        android:text="fpvVr7L5Ke3y" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -44,6 +46,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
+
+        <Button
+            android:id="@+id/subscribeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Subscribe" />
+
+        <Button
+            android:id="@+id/publishBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Publish" />
 
         <Button
             android:id="@+id/connectBtn"
