@@ -83,10 +83,10 @@ public class MQTTService implements MqttCallback {
     }
 
     //Метод для публикации сообщений
-    public void publishMQTTMessage(){
-        MqttMessage message = new MqttMessage("TestPayload".getBytes());
+    public void publishMQTTMessage(String topic){
+        MqttMessage message = new MqttMessage();
         try {
-            getClient().publish("testTopic", message);
+            getClient().publish(topic, message);
         } catch (MqttException e) {
             System.out.println("Publish failed.");
             e.printStackTrace();

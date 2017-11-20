@@ -31,6 +31,7 @@ public class Room {
     //Метод для добавления нового устройства в контейнер к выключателям
     public void addLight(String lightName){
         Light light = new Light(lightName, false);
+        lightHashMap.put(lightName, light);
     }
 
     //Удаление устройства из контейнера выключателей
@@ -83,7 +84,7 @@ public class Room {
     }
 
     public void setTopic(String topic) {
-        this.topic = getRoomName() + "/" +topic;
+        this.topic = roomName + "/" + topic;
     }
 
     private HashMap<String, Light> lightHashMap;

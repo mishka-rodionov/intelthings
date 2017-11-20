@@ -53,7 +53,7 @@ public class Light {
     }
 
     public void setTopic() {
-        this.topic = getName() + "/" + getState().toString();
+        this.topic = name + "/" + state.toString();
     }
 
     private String topic;

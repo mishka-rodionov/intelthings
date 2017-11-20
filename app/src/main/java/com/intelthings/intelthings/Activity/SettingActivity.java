@@ -43,7 +43,7 @@ public class SettingActivity extends AppCompatActivity{
                         break;
                     case R.id.publishBtn:
                         try{
-                            mqttService.publishMQTTMessage();
+                            mqttService.publishMQTTMessage("test_topic");
                         }catch (NullPointerException e){
                             e.printStackTrace();
                             System.out.println("MQTTservice object not created.");
