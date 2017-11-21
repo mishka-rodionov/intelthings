@@ -20,13 +20,13 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
-        ViewGroup.LayoutParams linearLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        linearLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         setContentView(linearLayout, linearLayoutParams);
 
         ViewGroup.LayoutParams linParView = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        TextView textView = new TextView(this);
+        textView = new TextView(this);
         textView.setText("RoomName");
         textView.setLayoutParams(linParView);
         linearLayout.addView(textView);
@@ -46,4 +46,8 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 //            case R.id.
         }
     }
+
+    private LinearLayout linearLayout;
+    private TextView textView;
+    private ViewGroup.LayoutParams linearLayoutParams;
 }
