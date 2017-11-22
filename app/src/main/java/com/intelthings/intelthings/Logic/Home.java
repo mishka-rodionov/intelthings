@@ -9,6 +9,8 @@ import java.util.HashMap;
 
 /**
  * Created by Lab1 on 20.11.2017.
+ * Базовый класс приложения. Имеет единственный экземпляр. Содержит в себе контейнер объектов класса
+ * комнат. Также используется для работы с MQTT-сервисом.
  */
 
 public class Home implements Parcelable {

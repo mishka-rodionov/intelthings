@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 if(roomActivityHashMap.isEmpty()){
                     roomActivityHashMap.put("newRoom1", roomActivity);                                  //Добавление новой комнаты в общий контейнер комнат.
                     Intent roomActivityIntent = new Intent(this, RoomActivity.class);                   //интент для перехода на страницу вновь созданной комнаты.
-                    roomActivityIntent.putExtra("roomActivity", (Parcelable) roomActivityHashMap.get("newRoom1"));
+                    //roomActivityIntent.putExtra("roomActivity", (Parcelable) roomActivityHashMap.get("newRoom1"));
                     startActivity(roomActivityIntent);
                 }
                 else{
