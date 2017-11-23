@@ -8,10 +8,15 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelthings.intelthings.R;
+import com.intelthings.intelthings.Service.MQTTService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Lab1 on 07.11.2017.
@@ -22,8 +27,34 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.room_activity);
+        setContentView(R.layout.room_activity);
 
+        viewList = new ArrayList<View>();
+        linearLayout = (LinearLayout) findViewById(R.id.linear);
+        createLight = (Button) findViewById(R.id.createLightBtn);
+        createLight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View view = getLayoutInflater().inflate(R.layout.custom_view, null);
+                ImageButton createBtn = (ImageButton) view.findViewById(R.id.createBtn);
+                ImageButton clearBtn = (ImageButton) view.findViewById(R.id.clearBtn);
+                ImageButton buildBtn = (ImageButton) view.findViewById(R.id.buildBtn);
+                ImageButton settingsBtn = (ImageButton) view.findViewById(R.id.settingsBtn);
+                settingsBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+//                        MQTTService.initMQTTServiceInstance();
+                        MQTTService mqttService = MQTTService.getMqttServiceInstance();
+                        mqttService.publishMQTTMessage("test_topic");
+                    }
+                });
+                ImageButton doneBtn = (ImageButton) view.findViewById(R.id.doneBtn);
+                TextView textView = (TextView) view.findViewById(R.id.textView);
+                viewList.add(view);
+                linearLayout.addView(view);
+            }
+        });
+/*
         mainLinearLayout = new LinearLayout(this);
         mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -35,7 +66,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         floatingActionButton.setLayoutParams(linParView);
         floatingActionButton.setClickable(true);
         mainLinearLayout.addView(floatingActionButton);
-/*
+
         ViewGroup.LayoutParams llVertical = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         linearLayoutVertical = new LinearLayout(mainLinearLayout.getContext());
         linearLayoutVertical.setOrientation(LinearLayout.VERTICAL);
@@ -116,7 +147,12 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private LinearLayout mainLinearLayout;
+    private List<View> viewList;
+    private int counter = 0;
+    private LinearLayout linearLayout;
+    private Button createLight;
+
+/*    private LinearLayout mainLinearLayout;
     private LinearLayout linearLayoutVertical;
     private LinearLayout linearLayoutHorizontal;
     private TextView textView;
@@ -130,4 +166,5 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     private View.OnClickListener onClickListenerSocket;
     private View.OnClickListener onClickListenerSensor;
     private View.OnClickListener onClickListenerActuator;
+    */
 }

@@ -1,6 +1,7 @@
 package com.intelthings.intelthings.Service;
 
 import android.app.Activity;
+import android.app.Application;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -19,13 +20,18 @@ import java.sql.SQLOutput;
  * Created by Lab1 on 07.11.2017.
  */
 
-public class MQTTService implements MqttCallback {
+public class MQTTService extends Application implements MqttCallback {
     //Конструктор по умолчанию
     public MQTTService(){
 
     }
+
+    private MQTTService(int mqttQoS){
+        this.mqttQoS = mqttQoS;
+    }
+
     //Тестовый конструктор для связи с брокером cloudmqtt
-    public MQTTService(String mqttUsername, String mqttPassword, Activity activity){
+    public void setMQTTServiceParameters(String mqttUsername, String mqttPassword, Activity activity){
         setMqttUsername(mqttUsername);
         setMqttPassword(mqttPassword);
         setMqttBrokerPortNumber("15305");
@@ -38,6 +44,16 @@ public class MQTTService implements MqttCallback {
         getOptions().setPassword(getMqttPassword().toCharArray());
         setActivity(activity);
         getClient().setCallback(this);      //Вызов данного метода необходим для оформления подписки.
+    }
+
+    public static void initMQTTServiceInstance(){
+        if(mqttServiceInstance == null){
+            mqttServiceInstance = new MQTTService(0);
+        }
+    }
+
+    public static MQTTService getMqttServiceInstance(){
+        return mqttServiceInstance;
     }
 
     //Основной конструктор, использует данные из SettingActivity. создает обект по указанным
@@ -85,8 +101,10 @@ public class MQTTService implements MqttCallback {
     //Метод для публикации сообщений
     public void publishMQTTMessage(String topic){
         MqttMessage message = new MqttMessage();
+        message.setPayload("hello".getBytes());
         try {
             getClient().publish(topic, message);
+            System.out.println("Publish tpoic = " + topic);
         } catch (MqttException e) {
             System.out.println("Publish failed.");
             e.printStackTrace();
@@ -126,6 +144,12 @@ public class MQTTService implements MqttCallback {
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
 
+    }
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        MQTTService.initMQTTServiceInstance();
     }
 
     //Getter & setter
@@ -211,5 +235,6 @@ public class MQTTService implements MqttCallback {
     private Integer mqttQoS;
     private MqttAndroidClient client;
     private MqttConnectOptions options;
+    private static MQTTService mqttServiceInstance;
 
 }

@@ -1,5 +1,6 @@
 package com.intelthings.intelthings.Logic;
 
+import android.app.Application;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,11 +14,23 @@ import java.util.HashMap;
  * комнат. Также используется для работы с MQTT-сервисом.
  */
 
-public class Home implements Parcelable {
+public class Home extends Application implements Parcelable {
+
+
+
+    public static void initHomeInstance(){
+        if(homeInstance == null){
+            homeInstance = new Home();
+        }
+    }
+
+    public static Home getHomeInstance(){
+        return homeInstance;
+    }
 
     public Home(){}
 
-    public Home(String homeName){
+    private Home(String homeName){
         this.homeName = homeName;
         roomHashMap = new HashMap<String, Room>();
     }
@@ -61,6 +74,13 @@ public class Home implements Parcelable {
     private String homeName;
     private String topic;
     private HashMap<String, Room> roomHashMap;
+    private static Home homeInstance;
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        Home.initHomeInstance();
+    }
 
     @Override
     public int describeContents() {

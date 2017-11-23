@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/settingsBtn"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical"
+        android:text="TextView" />
+
+    <ImageButton
+        android:id="@+id/clearBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_clear_black_24dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/doneBtn"
+        android:layout_toEndOf="@+id/doneBtn" />
+
+    <ImageButton
+        android:id="@+id/createBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_create_black_24dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/buildBtn"
+        android:layout_toEndOf="@+id/buildBtn" />
+
+    <ImageButton
+        android:id="@+id/buildBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_build_black_24dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/settingsBtn"
+        android:layout_toEndOf="@+id/settingsBtn" />
+
+    <ImageButton
+        android:id="@+id/settingsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_settings_power_black_24dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_toEndOf="@+id/textView" />
+
+    <ImageButton
+        android:id="@+id/doneBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_done_black_24dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/createBtn"
+        android:layout_toEndOf="@+id/createBtn" />
+</RelativeLayout>

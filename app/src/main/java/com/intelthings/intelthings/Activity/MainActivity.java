@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         imageButtonSettings.setOnClickListener(this);
         addRooms.setOnClickListener(this);
         roomCount = 0;
+//        home = new Home("MyHome");
     }
 
 
