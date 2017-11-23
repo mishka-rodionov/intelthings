@@ -46,7 +46,7 @@ public class MQTTService extends Application implements MqttCallback {
         getClient().setCallback(this);      //Вызов данного метода необходим для оформления подписки.
     }
 
-    public static void initMQTTServiceInstance(){
+    public synchronized static void initMQTTServiceInstance(){
         if(mqttServiceInstance == null){
             mqttServiceInstance = new MQTTService(0);
         }
