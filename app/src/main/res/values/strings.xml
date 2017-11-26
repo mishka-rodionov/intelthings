@@ -5,4 +5,5 @@
     <string name="brokerPort">Port</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="hint">Device name</string>
 </resources>

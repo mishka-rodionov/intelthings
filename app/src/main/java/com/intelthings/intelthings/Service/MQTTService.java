@@ -99,9 +99,9 @@ public class MQTTService extends Application implements MqttCallback {
     }
 
     //Метод для публикации сообщений
-    public void publishMQTTMessage(String topic){
+    public void publishMQTTMessage(String topic, String payload){
         MqttMessage message = new MqttMessage();
-        message.setPayload("hello".getBytes());
+        message.setPayload(payload.getBytes());
         try {
             getClient().publish(topic, message);
             System.out.println("Publish tpoic = " + topic);

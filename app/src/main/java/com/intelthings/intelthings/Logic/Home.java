@@ -40,9 +40,9 @@ public class Home extends Application implements Parcelable {
         roomHashMap.put(roomName, room);
     }
 
-    public void publishLight(String roomName, String lightName, Boolean state, MQTTService mqttService){
+    public void publishLight(String roomName, String lightName, Boolean state, MQTTService mqttService, String payloadLight){
         setTopic(roomHashMap.get(roomName).publishLight(lightName, state));
-        mqttService.publishMQTTMessage(getTopic());
+        mqttService.publishMQTTMessage(getTopic(), payloadLight);
     }
 
 
