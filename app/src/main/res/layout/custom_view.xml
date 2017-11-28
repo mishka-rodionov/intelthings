@@ -11,7 +11,7 @@
         android:layout_alignBottom="@+id/settingsBtn"
         android:layout_alignParentTop="true"
         android:gravity="center_vertical"
-        android:text="TextView" />
+        android:text="@string/deviceName" />
 
     <ImageButton
         android:id="@+id/clearBtn"

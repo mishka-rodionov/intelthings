@@ -50,7 +50,10 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 View view = getLayoutInflater().inflate(R.layout.custom_view, null);
                 final TextView textView = (TextView) view.findViewById(R.id.textView);
+
                 //******************************************************************************
+                //Создание пользовательского диалогового окна, с полем ввода имени устройства и
+                //с кнопками подтверждения и отмены операции.
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Enter the name");
                 // I'm using fragment here so I'm using getView() to provide ViewGroup
@@ -79,8 +82,6 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
                 builder.show();
                 //******************************************************************************
-
-//                new UserDialogFragment().createDialog(context);
 
                 ImageButton createBtn = (ImageButton) view.findViewById(R.id.createBtn);
                 ImageButton clearBtn = (ImageButton) view.findViewById(R.id.clearBtn);
