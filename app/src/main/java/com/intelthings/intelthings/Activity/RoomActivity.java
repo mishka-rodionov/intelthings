@@ -5,14 +5,18 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +27,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.intelthings.intelthings.Logic.Light;
 import com.intelthings.intelthings.R;
+import com.intelthings.intelthings.Service.DatabaseManager;
 import com.intelthings.intelthings.Service.MQTTService;
 import com.intelthings.intelthings.View.UserDialogFragment;
 
@@ -40,6 +46,12 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.room_activity);
+        //database section
+        DatabaseManager dbManager = new DatabaseManager(this);
+        final ContentValues contentValues = new ContentValues();
+        final SQLiteDatabase sqLiteDatabase = dbManager.getWritableDatabase();
+
+        //***
 
         viewList = new ArrayList<View>();
         linearLayout = (LinearLayout) findViewById(R.id.linear);
@@ -50,6 +62,14 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 View view = getLayoutInflater().inflate(R.layout.custom_view, null);
                 final TextView textView = (TextView) view.findViewById(R.id.textView);
+
+                final Light light = new Light();
+                light.setState(false);
+                light.setTemperature(23.0);
+                light.setStateOutsideSwitch(false);
+                contentValues.put("temperature", light.getTemperature());
+                contentValues.put("stateOS", light.getStateOutsideSwitch().toString());
+                contentValues.put("FK", 1);
 
                 //******************************************************************************
                 //Создание пользовательского диалогового окна, с полем ввода имени устройства и
@@ -70,7 +90,18 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        textView.setText(input.getText().toString());;
+                        sqLiteDatabase.execSQL("create table if not exists light" + input.getText().toString()
+                                + " ("
+                                + "id integer primary key autoincrement,"
+                                + "name text,"
+                                + "state text,"
+                                + "stateOS text,"
+                                + "temperature real,"
+                                + "date_time text,"
+                                + "FK integer"+ ");");
+                        light.setName(input.getText().toString());
+                        contentValues.put("name", input.getText().toString());
+                        textView.setText(input.getText().toString());
                     }
                 });
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -87,15 +118,55 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 ImageButton clearBtn = (ImageButton) view.findViewById(R.id.clearBtn);
                 ImageButton buildBtn = (ImageButton) view.findViewById(R.id.buildBtn);
                 ImageButton settingsBtn = (ImageButton) view.findViewById(R.id.settingsBtn);
+
                 settingsBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 //                        MQTTService.initMQTTServiceInstance();
                         MQTTService mqttService = MQTTService.getMqttServiceInstance();
                         mqttService.publishMQTTMessage("test_topic", textView.getText().toString());
+                        light.setState(!light.getState());
+                        contentValues.put("state", light.getState().toString());
+                        sqLiteDatabase.insert("light" + light.getName(), null, contentValues);
                     }
                 });
                 ImageButton doneBtn = (ImageButton) view.findViewById(R.id.doneBtn);
+                doneBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(LOG_TAG, "--- Rows in mytable: ---");
+                        // делаем запрос всех данных из таблицы mytable, получаем Cursor
+                        Cursor c = sqLiteDatabase.query("light" + light.getName(), null, null, null, null, null, null);
+
+                        // ставим позицию курсора на первую строку выборки
+                        // если в выборке нет строк, вернется false
+                        if (c.moveToFirst()) {
+
+                            // определяем номера столбцов по имени в выборке
+                            int idColIndex = c.getColumnIndex("id");
+                            int nameColIndex = c.getColumnIndex("name");
+                            int stateColIndex = c.getColumnIndex("state");
+                            int stateOSColIndex = c.getColumnIndex("stateOS");
+                            int temperatureColIndex = c.getColumnIndex("temperature");
+                            int date_timeColIndex = c.getColumnIndex("date_time");
+
+                            do {
+                                // получаем значения по номерам столбцов и пишем все в лог
+                                Log.d(LOG_TAG,
+                                        "ID = " + c.getInt(idColIndex) +
+                                                ", name = " + c.getString(nameColIndex) +
+                                                ", state = " + c.getString(stateColIndex) +
+                                                ", stateOS = " + c.getString(stateOSColIndex) +
+                                                ", temperature = " + c.getString(temperatureColIndex) +
+                                                ", date_time = " + c.getString(date_timeColIndex));
+                                // переход на следующую строку
+                                // а если следующей нет (текущая - последняя), то false - выходим из цикла
+                            } while (c.moveToNext());
+                        } else
+                            Log.d(LOG_TAG, "0 rows");
+                        c.close();
+                    }
+                });
 
                 viewList.add(view);
                 linearLayout.addView(view);
@@ -118,6 +189,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     private Button createLight;
     private final int createLightDialog = 1;
     private String m_Text = "";
+    private String LOG_TAG = "myApp";
 
 /*    private LinearLayout mainLinearLayout;
     private LinearLayout linearLayoutVertical;

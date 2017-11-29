@@ -11,18 +11,18 @@ import android.util.Log;
 
 public class DatabaseManager extends SQLiteOpenHelper {
 
-    public DatabaseManager(Context context, String dbName){
-        super(context, dbName, null, 1);
+    public DatabaseManager(Context context){
+        super(context, "IntelThings", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Log.d(LOG_TAG, "--- onCreate database ---");
         // создаем таблицу с полями
-        sqLiteDatabase.execSQL("create table mytable ("
+        /*sqLiteDatabase.execSQL("create table mytable ("
                 + "id integer primary key autoincrement,"
                 + "name text,"
-                + "email text" + ");");
+                + "email text" + ");");*/
     }
 
     @Override
