@@ -54,19 +54,6 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 startActivity(settingActivityIntent);
                 break;
             case R.id.addRoomsBtn:
-//                RoomActivity roomActivity = new RoomActivity();                                         //Создание класса активити для новой комнаты.
-//                roomCount++;
-//                if(roomActivityHashMap.isEmpty()){
-//                    roomActivityHashMap.put("newRoom1", roomActivity);                                  //Добавление новой комнаты в общий контейнер комнат.
-//                    Intent roomActivityIntent = new Intent(this, RoomActivity.class);                   //интент для перехода на страницу вновь созданной комнаты.
-//                    //roomActivityIntent.putExtra("roomActivity", (Parcelable) roomActivityHashMap.get("newRoom1"));
-//                    startActivity(roomActivityIntent);
-//                }
-//                else{
-//                    roomActivityHashMap.put("newRoom" + roomCount.toString(), roomActivity);
-//                    Intent roomActivityIntent = new Intent(this, RoomActivity.class);
-//                    startActivity(roomActivityIntent);
-//                }
                 //******************************************************************************
                 //Создание пользовательского диалогового окна, с полем ввода имени устройства и
                 //с кнопками подтверждения и отмены операции.
@@ -115,7 +102,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
     private void checkFirstRun() {
 
-        final String PREFS_NAME = "MyPrefsFile21";
+        final String PREFS_NAME = "MyPrefsFile23";
         final String PREF_VERSION_CODE_KEY = "version_code";
         final int DOESNT_EXIST = -2;
 
@@ -162,8 +149,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                     prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
 
                     //********************
-                    sqLiteDatabase.execSQL("drop table userInfo");
-                    sqLiteDatabase.execSQL("drop table home");
+                    //sqLiteDatabase.execSQL("drop table userInfo");
+                    //sqLiteDatabase.execSQL("drop table home");
                     //********************
 
                     sqLiteDatabase.execSQL("create table userInfo"

@@ -34,6 +34,7 @@ import com.intelthings.intelthings.Service.MQTTService;
 import com.intelthings.intelthings.View.UserDialogFragment;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -73,6 +74,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 contentValues.put("temperature", light.getTemperature());
                 contentValues.put("stateOS", light.getStateOutsideSwitch().toString());
                 contentValues.put("FK", 1);
+                cvRoomTable = new ContentValues();
 
                 //******************************************************************************
                 //Создание пользовательского диалогового окна, с полем ввода имени устройства и
@@ -105,6 +107,13 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                         light.setName(input.getText().toString());
                         contentValues.put("name", input.getText().toString());
                         textView.setText(input.getText().toString());
+                        cvRoomTable.put("RoomName", tableName);
+                        cvRoomTable.put("DeviceType", "light");
+                        cvRoomTable.put("DeviceName", input.getText().toString());
+                        cvRoomTable.put("date_time", getTime());
+                        sqLiteDatabase.insert(tableName, null, cvRoomTable);
+                        cvRoomTable.clear();
+
                     }
                 });
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -253,6 +262,15 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public String getTime(){
+        return "" + Calendar.getInstance().get(Calendar.YEAR) + ":"
+                + Calendar.getInstance().get(Calendar.MONTH)+ ":"
+                + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + ":"
+                + Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + ":"
+                + Calendar.getInstance().get(Calendar.MINUTE) + ":"
+                + Calendar.getInstance().get(Calendar.SECOND);
+    }
+
     private List<View> viewList;
     private int counter = 0;
     private LinearLayout linearLayout;
@@ -260,6 +278,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     private final int createLightDialog = 1;
     private String m_Text = "";
     private String LOG_TAG = "myApp";
+    private ContentValues cvRoomTable;
 
 /*    private LinearLayout mainLinearLayout;
     private LinearLayout linearLayoutVertical;
