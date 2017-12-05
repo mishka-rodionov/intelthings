@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcelable;
 import android.support.design.BuildConfig;
@@ -17,11 +18,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.intelthings.intelthings.Logic.Home;
 import com.intelthings.intelthings.R;
 import com.intelthings.intelthings.Service.DatabaseManager;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -31,6 +34,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sqLiteDatabase = dbManager.getWritableDatabase();
+        roomName = new ArrayList<String>();
 
         checkFirstRun();
 
@@ -40,11 +45,16 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         imageButtonSettings.setOnClickListener(this);
         addRooms.setOnClickListener(this);
         roomCount = 0;
-        sqLiteDatabase = dbManager.getWritableDatabase();
+
 //        home = new Home("MyHome");
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Intent intent = getIntent();
 
+    }
 
     @Override
     public void onClick(View v) {
@@ -82,6 +92,10 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                                 + "date_time text,"
                                 + "FK integer"+ ");");
                         Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
+                        contentValues.put("RoomName", roomnameEdtTxt.getText().toString());
+                        contentValues.put("date_time", getTime());
+                        sqLiteDatabase.insert("home", null, contentValues);
+                        contentValues.clear();
                         roomActivityIntent.putExtra("tableName", roomnameEdtTxt.getText().toString());
                         startActivity(roomActivityIntent);
 
@@ -100,34 +114,49 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         }
     }
 
+    //Метод определения первого запуска приложения и текущей версии. При первом запуске метод создает SharedPreferences
+    //в котором сохраняет определенное значение. При последующих запусках происходит проверка на наличие этого значения
+    //и если оно существует, то происходит обычный запуск, без начальных инициализаций.
     private void checkFirstRun() {
 
-        final String PREFS_NAME = "MyPrefsFile23";
+        final String PREFS_NAME = "MyPrefsFile28";
         final String PREF_VERSION_CODE_KEY = "version_code";
         final int DOESNT_EXIST = -2;
-
-        // Get current version code
         final int currentVersionCode = BuildConfig.VERSION_CODE;
+        final SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+        // Получение текущей версии кода
         Log.d(LOG_TAG, "currentVersionCode = " + currentVersionCode);
         Log.d(LOG_TAG, "current time = " + getTime());
 
 
-        // Get saved version code
-        final SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        // Получение сохраненной версии кода
         int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, DOESNT_EXIST);
         Log.d(LOG_TAG, "savedVersionCode = " + savedVersionCode);
 
-        // Check for first run or upgrade
+        // Проверка на первый вход или апгрейд
         if (currentVersionCode == savedVersionCode) {
-
-            // This is just a normal run
+            // При выполнении данного условия происходит обычная загрузка приложения
             Log.d(LOG_TAG, "currentVersionCode == savedVersionCode");
+
+            Cursor cursor = sqLiteDatabase.query("home", null, null, null, null, null, null);
+            if (cursor.moveToFirst()){
+                int roomNameColIndex = cursor.getColumnIndex("RoomName");
+                Log.d(LOG_TAG, "roomNameColIndex = " + roomNameColIndex);
+                Log.d(LOG_TAG, "value = " + cursor.getString(roomNameColIndex));
+                do {
+                    roomName.add(cursor.getString(roomNameColIndex));
+                    Log.d(LOG_TAG, cursor.getString(roomNameColIndex));
+                }while (cursor.moveToNext());
+            }else{
+                Log.d(LOG_TAG, "0 rows in table home");
+            }
+
             return;
-
         } else if (savedVersionCode == DOESNT_EXIST) {
-
             Log.d(LOG_TAG, "savedVersionCode == DOESNT_EXIST");
             // TODO This is a new install (or the user cleared the shared preferences)
+            //*При первом включении приложения выводится пользовательский диалог*//
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enter the name");
             // I'm using fragment here so I'm using getView() to provide ViewGroup
@@ -148,9 +177,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                     // Update the shared preferences with the current version code
                     prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
 
-                    //********************
-                    //sqLiteDatabase.execSQL("drop table userInfo");
-                    //sqLiteDatabase.execSQL("drop table home");
+                    //******************** Удаление таблиц для тестирования первого включения
+                    sqLiteDatabase.execSQL("drop table userInfo");
+                    sqLiteDatabase.execSQL("drop table home");
                     //********************
 
                     sqLiteDatabase.execSQL("create table userInfo"
@@ -186,8 +215,6 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                     finish();
                 }
             });
-
-
             builder.show();
 
         } else if (currentVersionCode > savedVersionCode) {
@@ -209,14 +236,17 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 + Calendar.getInstance().get(Calendar.SECOND);
     }
 
-    public Home home;
-    public HashMap<String, RoomActivity> roomActivityHashMap;
-    public FloatingActionButton addRooms;
-    public ImageButton imageButtonSettings;
-    public Integer roomCount;
+    private Home home;
+    private HashMap<String, RoomActivity> roomActivityHashMap;
+    private FloatingActionButton addRooms;
+    private ImageButton imageButtonSettings;
+    private Integer roomCount;
     private String LOG_TAG = "myApp";
-    DatabaseManager dbManager = new DatabaseManager(MainActivity.this);
-    final ContentValues contentValues = new ContentValues();
+    private DatabaseManager dbManager = new DatabaseManager(MainActivity.this);
+    private final ContentValues contentValues = new ContentValues();
     private SQLiteDatabase sqLiteDatabase;
+    private ArrayList<String> roomName;
+    private ArrayList<View> viewArrayList;
+    private LinearLayout dynamicLinearlayout;
 
 }

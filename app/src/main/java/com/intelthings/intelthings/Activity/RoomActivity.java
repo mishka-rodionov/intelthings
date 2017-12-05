@@ -47,30 +47,34 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.room_activity);
-        //database section
+
+        Intent mainActivityIntent = getIntent();
         DatabaseManager dbManager = new DatabaseManager(this);
+
         final ContentValues contentValues = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = dbManager.getWritableDatabase();
-        Intent mainActivityIntent = getIntent();
+        final Context context = RoomActivity.this;
         final String tableName = mainActivityIntent.getStringExtra("tableName");
         Log.d(LOG_TAG, "tableName = " + tableName);
 
-        //***
-
         viewList = new ArrayList<View>();
-        linearLayout = (LinearLayout) findViewById(R.id.linear);
-        final Context context = RoomActivity.this;
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayoutRoomActivity);
         createLight = (Button) findViewById(R.id.createLightBtn);
+
+        //Обработчик нажатия на кнопку создания устройства. При нажатии на кнопку, создается view и
+        //отображается в linearLayout. Также создаётся запись в таблице с именем комнаты.
         createLight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 View view = getLayoutInflater().inflate(R.layout.custom_view, null);
-                final TextView textView = (TextView) view.findViewById(R.id.textView);
 
+                final TextView textView = (TextView) view.findViewById(R.id.textView);
                 final Light light = new Light();
+
                 light.setState(false);
-                light.setTemperature(23.0);
-                light.setStateOutsideSwitch(false);
+                light.setTemperature(23.0);             //Тестовое значение, необходимо обновлять из подписки
+                light.setStateOutsideSwitch(false);     //Тестовое значение, необходимо обновлять из подписки
+
                 contentValues.put("temperature", light.getTemperature());
                 contentValues.put("stateOS", light.getStateOutsideSwitch().toString());
                 contentValues.put("FK", 1);
@@ -104,13 +108,16 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                                 + "temperature real,"
                                 + "date_time text,"
                                 + "FK integer"+ ");");
+
                         light.setName(input.getText().toString());
-                        contentValues.put("name", input.getText().toString());
                         textView.setText(input.getText().toString());
+
+                        contentValues.put("name", input.getText().toString());
                         cvRoomTable.put("RoomName", tableName);
                         cvRoomTable.put("DeviceType", "light");
                         cvRoomTable.put("DeviceName", input.getText().toString());
                         cvRoomTable.put("date_time", getTime());
+
                         sqLiteDatabase.insert(tableName, null, cvRoomTable);
                         cvRoomTable.clear();
 
@@ -131,6 +138,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(View v) {
                         Log.d(LOG_TAG, "--- Rows in mytable: ---");
+
                         // делаем запрос всех данных из таблицы mytable, получаем Cursor
                         Cursor c = sqLiteDatabase.query("home", null, null, null, null, null, null);
 
@@ -262,6 +270,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //Метод получения текущей даты и времени
     public String getTime(){
         return "" + Calendar.getInstance().get(Calendar.YEAR) + ":"
                 + Calendar.getInstance().get(Calendar.MONTH)+ ":"
@@ -271,28 +280,13 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 + Calendar.getInstance().get(Calendar.SECOND);
     }
 
-    private List<View> viewList;
+    private List<View> viewList;                //Контейнер для хранения динамически добавляемых view объектов
     private int counter = 0;
-    private LinearLayout linearLayout;
+    private LinearLayout linearLayout;          //Layout в который встраиваются динамически добавляемые view
     private Button createLight;
     private final int createLightDialog = 1;
     private String m_Text = "";
     private String LOG_TAG = "myApp";
     private ContentValues cvRoomTable;
 
-/*    private LinearLayout mainLinearLayout;
-    private LinearLayout linearLayoutVertical;
-    private LinearLayout linearLayoutHorizontal;
-    private TextView textView;
-    private ViewGroup.LayoutParams linearLayoutParams;
-    private FloatingActionButton floatingActionButton;
-    private Button createButtonLight;
-    private Button createButtonSocket;
-    private Button createButtonSensor;
-    private Button createButtonActuator;
-    private View.OnClickListener onClickListenerLight;
-    private View.OnClickListener onClickListenerSocket;
-    private View.OnClickListener onClickListenerSensor;
-    private View.OnClickListener onClickListenerActuator;
-    */
 }
