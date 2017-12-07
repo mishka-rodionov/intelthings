@@ -151,11 +151,11 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(View v) {
                         for (int i = 0; i < roomNames.size(); i++) {
-                        try{
-                            readRoomTable(roomNames.get(i), sqLiteDatabase);
-                        }catch (SQLiteException e){
-                            Log.d(LOG_TAG, "no such table");
-                        }
+                            try{
+                                readRoomTable(roomNames.get(i), sqLiteDatabase);
+                            }catch (SQLiteException e){
+                                Log.d(LOG_TAG, "no such table");
+                            }
                         }
                     }
                 });

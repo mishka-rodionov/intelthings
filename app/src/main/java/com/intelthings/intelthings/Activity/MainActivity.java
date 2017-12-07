@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import com.intelthings.intelthings.Logic.Home;
 import com.intelthings.intelthings.R;
 import com.intelthings.intelthings.Service.DatabaseManager;
+import com.intelthings.intelthings.Service.MQTTService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -138,7 +139,11 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         if (currentVersionCode == savedVersionCode) {
             // При выполнении данного условия происходит обычная загрузка приложения
             Log.d(LOG_TAG, "currentVersionCode == savedVersionCode");
-
+            try{
+                connectMqtt(sqLiteDatabase);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             Cursor cursor = sqLiteDatabase.query("home", null, null, null, null, null, null);
             if (cursor.moveToFirst()){
                 int roomNameColIndex = cursor.getColumnIndex("RoomName");
@@ -178,8 +183,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                     prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
 
                     //******************** Удаление таблиц для тестирования первого включения
-                    sqLiteDatabase.execSQL("drop table userInfo");
-                    sqLiteDatabase.execSQL("drop table home");
+//                    sqLiteDatabase.execSQL("drop table userInfo");
+//                    sqLiteDatabase.execSQL("drop table home");
                     //********************
 
                     //Создание таблицы для пользовательской информации (логин и пароль).
@@ -241,6 +246,18 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 + Calendar.getInstance().get(Calendar.SECOND);
     }
 
+    public void connectMqtt(SQLiteDatabase sqLiteDatabase){
+        Cursor cursor = sqLiteDatabase.query("userInfo", null, null, null, null, null, null);
+        int loginColIndex = cursor.getColumnIndex("Username");
+        int passwordColIndex = cursor.getColumnIndex("Password");
+        Log.d(LOG_TAG, "login = " + cursor.getString(loginColIndex));
+        Log.d(LOG_TAG, "password = " + cursor.getString(passwordColIndex));
+        mqttService = MQTTService.getMqttServiceInstance();
+        mqttService.setMQTTServiceParameters(cursor.getString(loginColIndex), cursor.getString(passwordColIndex),
+                this);
+        cursor.close();
+    }
+
     private Home home;
     private HashMap<String, RoomActivity> roomActivityHashMap;
     private FloatingActionButton addRooms;
@@ -251,6 +268,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     private final ContentValues contentValues = new ContentValues();
     private SQLiteDatabase sqLiteDatabase;
     private ArrayList<String> roomName;
+    private MQTTService mqttService;
     private ArrayList<View> viewArrayList;
     private LinearLayout dynamicLinearlayout;
 
