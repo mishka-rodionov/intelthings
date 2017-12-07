@@ -182,6 +182,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                     sqLiteDatabase.execSQL("drop table home");
                     //********************
 
+                    //Создание таблицы для пользовательской информации (логин и пароль).
                     sqLiteDatabase.execSQL("create table userInfo"
                             + " ("
                             + "id integer primary key autoincrement,"
@@ -194,6 +195,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                     contentValues.put("date_time", getTime());
                     sqLiteDatabase.insert("UserInfo", null, contentValues);
                     contentValues.clear();
+
+                    //Создание таблицы для хранения списка комнат.
                     sqLiteDatabase.execSQL("create table home"
                             + " ("
                             + "id integer primary key autoincrement,"
@@ -212,6 +215,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
+                    //При первом запуске приложения и нажатии кнопки cancel в диалоговом окне ввода
+                    //имени пользователя и пароля, приложение будет закрыто.
                     finish();
                 }
             });

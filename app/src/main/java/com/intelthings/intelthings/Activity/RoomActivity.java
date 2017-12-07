@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -137,36 +138,11 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 createBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(LOG_TAG, "--- Rows in mytable: ---");
-
-                        // делаем запрос всех данных из таблицы mytable, получаем Cursor
-                        Cursor c = sqLiteDatabase.query("home", null, null, null, null, null, null);
-
-                        // ставим позицию курсора на первую строку выборки
-                        // если в выборке нет строк, вернется false
-                        if (c.moveToFirst()) {
-
-                            // определяем номера столбцов по имени в выборке
-                            int idColIndex = c.getColumnIndex("id");
-                            int homeNameColIndex = c.getColumnIndex("HomeName");
-                            int roomNameColIndex = c.getColumnIndex("RoomName");
-                            int stateOSColIndex = c.getColumnIndex("stateOS");
-                            int temperatureColIndex = c.getColumnIndex("temperature");
-                            int date_timeColIndex = c.getColumnIndex("date_time");
-
-                            do {
-                                // получаем значения по номерам столбцов и пишем все в лог
-                                Log.d(LOG_TAG,
-                                        "ID = " + c.getInt(idColIndex) +
-                                                ", name = " + c.getString(homeNameColIndex) +
-                                                ", state = " + c.getString(roomNameColIndex) +
-                                                ", date_time = " + c.getString(date_timeColIndex));
-                                // переход на следующую строку
-                                // а если следующей нет (текущая - последняя), то false - выходим из цикла
-                            } while (c.moveToNext());
-                        } else
-                            Log.d(LOG_TAG, "0 rows");
-                        c.close();
+                        roomNames = readHomeTable(sqLiteDatabase);
+                        Log.d(LOG_TAG, "roomNames.size() = " + roomNames.size());
+                        for (int i = 0; i < roomNames.size(); i++) {
+                            Log.d(LOG_TAG, roomNames.get(i) + " ");
+                        }
                     }
                 });
                 ImageButton clearBtn = (ImageButton) view.findViewById(R.id.clearBtn);
@@ -174,35 +150,13 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 buildBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(LOG_TAG, "--- Rows in mytable: ---");
-                        // делаем запрос всех данных из таблицы mytable, получаем Cursor
-                        Cursor c = sqLiteDatabase.query(tableName, null, null, null, null, null, null);
-
-                        // ставим позицию курсора на первую строку выборки
-                        // если в выборке нет строк, вернется false
-                        if (c.moveToFirst()) {
-
-                            // определяем номера столбцов по имени в выборке
-                            int idColIndex = c.getColumnIndex("id");
-                            int roomNameColIndex = c.getColumnIndex("RoomName");
-                            int deviceTypeColIndex = c.getColumnIndex("DeviceType");
-                            int deviceNameColIndex = c.getColumnIndex("DeviceName");
-                            int date_timeColIndex = c.getColumnIndex("date_time");
-
-                            do {
-                                // получаем значения по номерам столбцов и пишем все в лог
-                                Log.d(LOG_TAG,
-                                        "ID = " + c.getInt(idColIndex) +
-                                                ", RoomName = " + c.getString(roomNameColIndex) +
-                                                ", DeviceType = " + c.getString(deviceTypeColIndex) +
-                                                ", DeviceName = " + c.getString(deviceNameColIndex) +
-                                                ", date_time = " + c.getString(date_timeColIndex));
-                                // переход на следующую строку
-                                // а если следующей нет (текущая - последняя), то false - выходим из цикла
-                            } while (c.moveToNext());
-                        } else
-                            Log.d(LOG_TAG, "0 rows");
-                        c.close();
+                        for (int i = 0; i < roomNames.size(); i++) {
+                        try{
+                            readRoomTable(roomNames.get(i), sqLiteDatabase);
+                        }catch (SQLiteException e){
+                            Log.d(LOG_TAG, "no such table");
+                        }
+                        }
                     }
                 });
                 ImageButton settingsBtn = (ImageButton) view.findViewById(R.id.settingsBtn);
@@ -280,6 +234,72 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 + Calendar.getInstance().get(Calendar.SECOND);
     }
 
+    public void readRoomTable(String tableName, SQLiteDatabase sqLiteDatabase){
+        Log.d(LOG_TAG, "--- Rows in mytable: ---");
+        // делаем запрос всех данных из таблицы mytable, получаем Cursor
+        Cursor c = sqLiteDatabase.query(tableName, null, null, null, null, null, null);
+
+        // ставим позицию курсора на первую строку выборки
+        // если в выборке нет строк, вернется false
+        if (c.moveToFirst()) {
+
+            // определяем номера столбцов по имени в выборке
+            int idColIndex = c.getColumnIndex("id");
+            int roomNameColIndex = c.getColumnIndex("RoomName");
+            int deviceTypeColIndex = c.getColumnIndex("DeviceType");
+            int deviceNameColIndex = c.getColumnIndex("DeviceName");
+            int date_timeColIndex = c.getColumnIndex("date_time");
+
+            do {
+                // получаем значения по номерам столбцов и пишем все в лог
+                Log.d(LOG_TAG,
+                        "ID = " + c.getInt(idColIndex) +
+                                ", RoomName = " + c.getString(roomNameColIndex) +
+                                ", DeviceType = " + c.getString(deviceTypeColIndex) +
+                                ", DeviceName = " + c.getString(deviceNameColIndex) +
+                                ", date_time = " + c.getString(date_timeColIndex));
+                // переход на следующую строку
+                // а если следующей нет (текущая - последняя), то false - выходим из цикла
+            } while (c.moveToNext());
+        } else
+            Log.d(LOG_TAG, "0 rows");
+        c.close();
+    }
+
+    public ArrayList<String> readHomeTable(SQLiteDatabase sqLiteDatabase){
+        ArrayList<String> rooms = new ArrayList<String>();
+        Log.d(LOG_TAG, "--- Rows in home table: ---");
+
+        // делаем запрос всех данных из таблицы mytable, получаем Cursor
+        Cursor c = sqLiteDatabase.query("home", null, null, null, null, null, null);
+
+        // ставим позицию курсора на первую строку выборки
+        // если в выборке нет строк, вернется false
+        if (c.moveToFirst()) {
+
+            // определяем номера столбцов по имени в выборке
+            int idColIndex = c.getColumnIndex("id");
+            int homeNameColIndex = c.getColumnIndex("HomeName");
+            int roomNameColIndex = c.getColumnIndex("RoomName");
+            int date_timeColIndex = c.getColumnIndex("date_time");
+
+            do {
+                // получаем значения по номерам столбцов и пишем все в лог
+                Log.d(LOG_TAG,
+                        "ID = " + c.getInt(idColIndex) +
+                                ", name = " + c.getString(homeNameColIndex) +
+                                ", state = " + c.getString(roomNameColIndex) +
+                                ", date_time = " + c.getString(date_timeColIndex));
+                rooms.add(c.getString(roomNameColIndex));
+                // переход на следующую строку
+                // а если следующей нет (текущая - последняя), то false - выходим из цикла
+            } while (c.moveToNext());
+        } else
+            Log.d(LOG_TAG, "0 rows");
+        c.close();
+        return rooms;
+    }
+
     private List<View> viewList;                //Контейнер для хранения динамически добавляемых view объектов
     private int counter = 0;
     private LinearLayout linearLayout;          //Layout в который встраиваются динамически добавляемые view
@@ -288,5 +308,6 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     private String m_Text = "";
     private String LOG_TAG = "myApp";
     private ContentValues cvRoomTable;
+    private ArrayList<String> roomNames;
 
 }
