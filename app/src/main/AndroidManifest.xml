@@ -31,6 +31,7 @@
         <activity
             android:name=".Activity.RoomActivity"
             android:theme="@style/AppTheme" />
+        <activity android:name=".Activity.UserinfoActivity"></activity>
     </application>
 
 </manifest>

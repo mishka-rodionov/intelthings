@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     //и если оно существует, то происходит обычный запуск, без начальных инициализаций.
     private void checkFirstRun() {
 
-        final String PREFS_NAME = "MyPrefsFile28";
+        final String PREFS_NAME = "MyPrefsFile29";
         final String PREF_VERSION_CODE_KEY = "version_code";
         final int DOESNT_EXIST = -2;
         final int currentVersionCode = BuildConfig.VERSION_CODE;
@@ -160,72 +160,76 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             return;
         } else if (savedVersionCode == DOESNT_EXIST) {
             Log.d(LOG_TAG, "savedVersionCode == DOESNT_EXIST");
-            // TODO This is a new install (or the user cleared the shared preferences)
-            //*При первом включении приложения выводится пользовательский диалог*//
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enter the name");
-            // I'm using fragment here so I'm using getView() to provide ViewGroup
-            // but you can provide here any other instance of ViewGroup from your Fragment / Activity
-            View viewInflated = LayoutInflater.from(MainActivity.this).inflate(R.layout.username_dialog_layout,
-                    (ViewGroup) findViewById(android.R.id.content), false);
-            // Set up the input
-            final EditText usernameEdtTxt = (EditText) viewInflated.findViewById(R.id.usernameEdtTxt);
-            final EditText passwordEdtTxt = (EditText) viewInflated.findViewById(R.id.passwordEdtTxt);
-            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-            builder.setView(viewInflated);
-
-            // Set up the buttons
-            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    // Update the shared preferences with the current version code
-                    prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
-
-                    //******************** Удаление таблиц для тестирования первого включения
-//                    sqLiteDatabase.execSQL("drop table userInfo");
-//                    sqLiteDatabase.execSQL("drop table home");
-                    //********************
-
-                    //Создание таблицы для пользовательской информации (логин и пароль).
-                    sqLiteDatabase.execSQL("create table userInfo"
-                            + " ("
-                            + "id integer primary key autoincrement,"
-                            + "Username text,"
-                            + "Password text,"
-                            + "date_time text"
-                            + ");");
-                    contentValues.put("Username", usernameEdtTxt.getText().toString());
-                    contentValues.put("Password", passwordEdtTxt.getText().toString());
-                    contentValues.put("date_time", getTime());
-                    sqLiteDatabase.insert("UserInfo", null, contentValues);
-                    contentValues.clear();
-
-                    //Создание таблицы для хранения списка комнат.
-                    sqLiteDatabase.execSQL("create table home"
-                            + " ("
-                            + "id integer primary key autoincrement,"
-                            + "HomeName text,"
-                            + "RoomName text,"
-                            + "date_time text"
-                            + ");");
-                    contentValues.put("HomeName", usernameEdtTxt.getText().toString());
-                    contentValues.put("RoomName", "firstRoom");
-                    contentValues.put("date_time", getTime());
-                    sqLiteDatabase.insert("home", null, contentValues);
-                    contentValues.clear();
-                }
-            });
-            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                    //При первом запуске приложения и нажатии кнопки cancel в диалоговом окне ввода
-                    //имени пользователя и пароля, приложение будет закрыто.
-                    finish();
-                }
-            });
-            builder.show();
+            //Обновление настроек для закрытия ветки первого включения.
+            prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+            Intent intent = new Intent(this, UserinfoActivity.class);
+            startActivityForResult(intent, 1);
+//            // TODO This is a new install (or the user cleared the shared preferences)
+//            //*При первом включении приложения выводится пользовательский диалог*//
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("Enter the name");
+//            // I'm using fragment here so I'm using getView() to provide ViewGroup
+//            // but you can provide here any other instance of ViewGroup from your Fragment / Activity
+//            View viewInflated = LayoutInflater.from(MainActivity.this).inflate(R.layout.username_dialog_layout,
+//                    (ViewGroup) findViewById(android.R.id.content), false);
+//            // Set up the input
+//            final EditText usernameEdtTxt = (EditText) viewInflated.findViewById(R.id.usernameEdtTxt);
+//            final EditText passwordEdtTxt = (EditText) viewInflated.findViewById(R.id.passwordEdtTxt);
+//            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+//            builder.setView(viewInflated);
+//
+//            // Set up the buttons
+//            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    dialog.dismiss();
+//                    // Update the shared preferences with the current version code
+//                    prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+//
+//                    //******************** Удаление таблиц для тестирования первого включения
+////                    sqLiteDatabase.execSQL("drop table userInfo");
+////                    sqLiteDatabase.execSQL("drop table home");
+//                    //********************
+//
+//                    //Создание таблицы для пользовательской информации (логин и пароль).
+//                    sqLiteDatabase.execSQL("create table Userinfo"
+//                            + " ("
+//                            + "id integer primary key autoincrement,"
+//                            + "Username text,"
+//                            + "Password text,"
+//                            + "date_time text"
+//                            + ");");
+//                    contentValues.put("Username", usernameEdtTxt.getText().toString());
+//                    contentValues.put("Password", passwordEdtTxt.getText().toString());
+//                    contentValues.put("date_time", getTime());
+//                    sqLiteDatabase.insert("UserInfo", null, contentValues);
+//                    contentValues.clear();
+//
+//                    //Создание таблицы для хранения списка комнат.
+//                    sqLiteDatabase.execSQL("create table home"
+//                            + " ("
+//                            + "id integer primary key autoincrement,"
+//                            + "HomeName text,"
+//                            + "RoomName text,"
+//                            + "date_time text"
+//                            + ");");
+//                    contentValues.put("HomeName", usernameEdtTxt.getText().toString());
+//                    contentValues.put("RoomName", "firstRoom");
+//                    contentValues.put("date_time", getTime());
+//                    sqLiteDatabase.insert("home", null, contentValues);
+//                    contentValues.clear();
+//                }
+//            });
+//            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    dialog.cancel();
+//                    //При первом запуске приложения и нажатии кнопки cancel в диалоговом окне ввода
+//                    //имени пользователя и пароля, приложение будет закрыто.
+//                    finish();
+//                }
+//            });
+//            builder.show();
 
         } else if (currentVersionCode > savedVersionCode) {
 
@@ -235,6 +239,35 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
 //        // Update the shared preferences with the current version code
 //        prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        sqLiteDatabase.execSQL("drop table Userinfo");
+        String mqttLogin;
+        String mqttPassword;
+        if(data == null){
+            return;
+        }else{
+            mqttLogin = data.getStringExtra("mqttLogin");
+            mqttPassword = data.getStringExtra("mqttPassword");
+        }
+        //Создание таблицы для пользовательской информации (логин и пароль).
+                    sqLiteDatabase.execSQL("create table Userinfo"
+                            + " ("
+                            + "id integer primary key autoincrement,"
+                            + "Username text,"
+                            + "Password text,"
+                            + "date_time text"
+                            + ");");
+                    contentValues.put("Username", mqttLogin);
+                    contentValues.put("Password", mqttPassword);
+                    contentValues.put("DateTime", getTime());
+                    sqLiteDatabase.insert("Userinfo", null, contentValues);
+                    contentValues.clear();
     }
 
     public String getTime(){
