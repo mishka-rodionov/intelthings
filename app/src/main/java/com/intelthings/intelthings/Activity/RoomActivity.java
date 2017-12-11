@@ -62,6 +62,20 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         linearLayout = (LinearLayout) findViewById(R.id.linearLayoutRoomActivity);
         createLight = (Button) findViewById(R.id.createLightBtn);
 
+        Cursor roomTableCursor = sqLiteDatabase.query(tableName, null,null,null,null,null,null);
+        if(roomTableCursor.moveToFirst()){
+            do{
+                View view = getLayoutInflater().inflate(R.layout.custom_view, null);
+                TextView textView = (TextView) view.findViewById(R.id.textView);
+                textView.setText(roomTableCursor.getString(roomTableCursor.getColumnIndex("DeviceName")));
+                viewList.add(view);
+                linearLayout.addView(view);
+            }while (roomTableCursor.moveToNext());
+        }else{
+            Log.d(LOG_TAG, "0 rows");
+
+        }
+
         //Обработчик нажатия на кнопку создания устройства. При нажатии на кнопку, создается view и
         //отображается в linearLayout. Также создаётся запись в таблице с именем комнаты.
         createLight.setOnClickListener(new View.OnClickListener() {
@@ -114,10 +128,10 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                         textView.setText(input.getText().toString());
 
                         contentValues.put("name", input.getText().toString());
-                        cvRoomTable.put("RoomName", tableName);
+                        cvRoomTable.put("Roomname", tableName);
                         cvRoomTable.put("DeviceType", "light");
                         cvRoomTable.put("DeviceName", input.getText().toString());
-                        cvRoomTable.put("date_time", getTime());
+                        cvRoomTable.put("Datetime", getTime());
 
                         sqLiteDatabase.insert(tableName, null, cvRoomTable);
                         cvRoomTable.clear();
@@ -245,10 +259,10 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
             // определяем номера столбцов по имени в выборке
             int idColIndex = c.getColumnIndex("id");
-            int roomNameColIndex = c.getColumnIndex("RoomName");
+            int roomNameColIndex = c.getColumnIndex("Roomname");
             int deviceTypeColIndex = c.getColumnIndex("DeviceType");
             int deviceNameColIndex = c.getColumnIndex("DeviceName");
-            int date_timeColIndex = c.getColumnIndex("date_time");
+            int date_timeColIndex = c.getColumnIndex("Datetime");
 
             do {
                 // получаем значения по номерам столбцов и пишем все в лог

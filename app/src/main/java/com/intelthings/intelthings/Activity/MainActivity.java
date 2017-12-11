@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -90,13 +91,13 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                         sqLiteDatabase.execSQL("create table " + roomnameEdtTxt.getText().toString()
                                 + " ("
                                 + "id integer primary key autoincrement,"
-                                + "RoomName text,"
+                                + "Roomname text,"
                                 + "DeviceType text,"
                                 + "DeviceName text,"
                                 + "Datetime text,"
                                 + "FK integer"+ ");");
                         Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
-                        contentValues.put("RoomName", roomnameEdtTxt.getText().toString());
+                        contentValues.put("Roomname", roomnameEdtTxt.getText().toString());
                         contentValues.put("Datetime", getTime());
                         sqLiteDatabase.insert("home", null, contentValues);
                         contentValues.clear();
@@ -115,6 +116,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 builder.show();
                 //******************************************************************************
                 break;
+            case R.id.openBtn:
+
+                break;
         }
     }
 
@@ -123,7 +127,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     //и если оно существует, то происходит обычный запуск, без начальных инициализаций.
     private void checkFirstRun() {
 
-        final String PREFS_NAME = "MyPrefsFile35";
+        final String PREFS_NAME = "MyPrefsFile39";
         final String PREF_VERSION_CODE_KEY = "version_code";
         final int DOESNT_EXIST = -2;
         final int currentVersionCode = BuildConfig.VERSION_CODE;
@@ -163,7 +167,16 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             }
             for (int i = 0; i < roomName.size(); i++) {
                 View roomView = getLayoutInflater().inflate(R.layout.room_view, null);
-                TextView roomnameTV = (TextView) roomView.findViewById(R.id.roomnameTV);
+                final TextView roomnameTV = (TextView) roomView.findViewById(R.id.roomnameTV);
+                Button openButton = (Button) roomView.findViewById(R.id.openBtn);
+                openButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
+                        roomActivityIntent.putExtra("tableName", roomnameTV.getText().toString());
+                        startActivity(roomActivityIntent);
+                    }
+                });
                 roomnameTV.setText(roomName.get(i));
                 viewArrayList.add(roomView);
                 dynamicLinearlayout.addView(roomView);
