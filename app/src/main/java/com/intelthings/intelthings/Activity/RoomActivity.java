@@ -279,9 +279,9 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
             // определяем номера столбцов по имени в выборке
             int idColIndex = c.getColumnIndex("id");
-            int homeNameColIndex = c.getColumnIndex("HomeName");
-            int roomNameColIndex = c.getColumnIndex("RoomName");
-            int date_timeColIndex = c.getColumnIndex("date_time");
+            int homeNameColIndex = c.getColumnIndex("Homename");
+            int roomNameColIndex = c.getColumnIndex("Roomname");
+            int date_timeColIndex = c.getColumnIndex("Datetime");
 
             do {
                 // получаем значения по номерам столбцов и пишем все в лог

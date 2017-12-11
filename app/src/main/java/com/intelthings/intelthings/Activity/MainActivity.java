@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.intelthings.intelthings.Logic.Home;
 import com.intelthings.intelthings.R;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         setContentView(R.layout.activity_main);
         sqLiteDatabase = dbManager.getWritableDatabase();
         roomName = new ArrayList<String>();
+        viewArrayList = new ArrayList<View>();
+        dynamicLinearlayout = (LinearLayout) findViewById(R.id.mainlinearlayout);
 
         checkFirstRun();
 
@@ -90,11 +93,11 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                                 + "RoomName text,"
                                 + "DeviceType text,"
                                 + "DeviceName text,"
-                                + "date_time text,"
+                                + "Datetime text,"
                                 + "FK integer"+ ");");
                         Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
                         contentValues.put("RoomName", roomnameEdtTxt.getText().toString());
-                        contentValues.put("date_time", getTime());
+                        contentValues.put("Datetime", getTime());
                         sqLiteDatabase.insert("home", null, contentValues);
                         contentValues.clear();
                         roomActivityIntent.putExtra("tableName", roomnameEdtTxt.getText().toString());
@@ -120,7 +123,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     //и если оно существует, то происходит обычный запуск, без начальных инициализаций.
     private void checkFirstRun() {
 
-        final String PREFS_NAME = "MyPrefsFile29";
+        final String PREFS_NAME = "MyPrefsFile35";
         final String PREF_VERSION_CODE_KEY = "version_code";
         final int DOESNT_EXIST = -2;
         final int currentVersionCode = BuildConfig.VERSION_CODE;
@@ -142,11 +145,13 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             try{
                 connectMqtt(sqLiteDatabase);
             }catch (Exception e){
+                Log.d(LOG_TAG, "Exeption in connectMqtt");
                 e.printStackTrace();
             }
+
             Cursor cursor = sqLiteDatabase.query("home", null, null, null, null, null, null);
             if (cursor.moveToFirst()){
-                int roomNameColIndex = cursor.getColumnIndex("RoomName");
+                int roomNameColIndex = cursor.getColumnIndex("Roomname");
                 Log.d(LOG_TAG, "roomNameColIndex = " + roomNameColIndex);
                 Log.d(LOG_TAG, "value = " + cursor.getString(roomNameColIndex));
                 do {
@@ -156,6 +161,13 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             }else{
                 Log.d(LOG_TAG, "0 rows in table home");
             }
+            for (int i = 0; i < roomName.size(); i++) {
+                View roomView = getLayoutInflater().inflate(R.layout.room_view, null);
+                TextView roomnameTV = (TextView) roomView.findViewById(R.id.roomnameTV);
+                roomnameTV.setText(roomName.get(i));
+                viewArrayList.add(roomView);
+                dynamicLinearlayout.addView(roomView);
+            }
 
             return;
         } else if (savedVersionCode == DOESNT_EXIST) {
@@ -164,72 +176,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
             Intent intent = new Intent(this, UserinfoActivity.class);
             startActivityForResult(intent, 1);
+            Log.d(LOG_TAG, "It's next action after intent!");
 //            // TODO This is a new install (or the user cleared the shared preferences)
-//            //*При первом включении приложения выводится пользовательский диалог*//
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//            builder.setTitle("Enter the name");
-//            // I'm using fragment here so I'm using getView() to provide ViewGroup
-//            // but you can provide here any other instance of ViewGroup from your Fragment / Activity
-//            View viewInflated = LayoutInflater.from(MainActivity.this).inflate(R.layout.username_dialog_layout,
-//                    (ViewGroup) findViewById(android.R.id.content), false);
-//            // Set up the input
-//            final EditText usernameEdtTxt = (EditText) viewInflated.findViewById(R.id.usernameEdtTxt);
-//            final EditText passwordEdtTxt = (EditText) viewInflated.findViewById(R.id.passwordEdtTxt);
-//            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-//            builder.setView(viewInflated);
-//
-//            // Set up the buttons
-//            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    dialog.dismiss();
-//                    // Update the shared preferences with the current version code
-//                    prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
-//
-//                    //******************** Удаление таблиц для тестирования первого включения
-////                    sqLiteDatabase.execSQL("drop table userInfo");
-////                    sqLiteDatabase.execSQL("drop table home");
-//                    //********************
-//
-//                    //Создание таблицы для пользовательской информации (логин и пароль).
-//                    sqLiteDatabase.execSQL("create table Userinfo"
-//                            + " ("
-//                            + "id integer primary key autoincrement,"
-//                            + "Username text,"
-//                            + "Password text,"
-//                            + "date_time text"
-//                            + ");");
-//                    contentValues.put("Username", usernameEdtTxt.getText().toString());
-//                    contentValues.put("Password", passwordEdtTxt.getText().toString());
-//                    contentValues.put("date_time", getTime());
-//                    sqLiteDatabase.insert("UserInfo", null, contentValues);
-//                    contentValues.clear();
-//
-//                    //Создание таблицы для хранения списка комнат.
-//                    sqLiteDatabase.execSQL("create table home"
-//                            + " ("
-//                            + "id integer primary key autoincrement,"
-//                            + "HomeName text,"
-//                            + "RoomName text,"
-//                            + "date_time text"
-//                            + ");");
-//                    contentValues.put("HomeName", usernameEdtTxt.getText().toString());
-//                    contentValues.put("RoomName", "firstRoom");
-//                    contentValues.put("date_time", getTime());
-//                    sqLiteDatabase.insert("home", null, contentValues);
-//                    contentValues.clear();
-//                }
-//            });
-//            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    dialog.cancel();
-//                    //При первом запуске приложения и нажатии кнопки cancel в диалоговом окне ввода
-//                    //имени пользователя и пароля, приложение будет закрыто.
-//                    finish();
-//                }
-//            });
-//            builder.show();
+
 
         } else if (currentVersionCode > savedVersionCode) {
 
@@ -246,7 +195,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         super.onActivityResult(requestCode, resultCode, data);
 
 
-        sqLiteDatabase.execSQL("drop table Userinfo");
+//        sqLiteDatabase.execSQL("drop table Userinfo");      //Используется для тестирования первого входа
         String mqttLogin;
         String mqttPassword;
         if(data == null){
@@ -256,18 +205,30 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             mqttPassword = data.getStringExtra("mqttPassword");
         }
         //Создание таблицы для пользовательской информации (логин и пароль).
-                    sqLiteDatabase.execSQL("create table Userinfo"
-                            + " ("
-                            + "id integer primary key autoincrement,"
-                            + "Username text,"
-                            + "Password text,"
-                            + "date_time text"
-                            + ");");
-                    contentValues.put("Username", mqttLogin);
-                    contentValues.put("Password", mqttPassword);
-                    contentValues.put("DateTime", getTime());
-                    sqLiteDatabase.insert("Userinfo", null, contentValues);
-                    contentValues.clear();
+        sqLiteDatabase.execSQL("create table if not exists Userinfo"
+                + " ("
+                + "id integer primary key autoincrement,"
+                + "Username text,"
+                + "Password text,"
+                + "Datetime text"
+                + ");");
+        contentValues.put("Username", mqttLogin);
+        contentValues.put("Password", mqttPassword);
+        contentValues.put("Datetime", getTime());
+        sqLiteDatabase.insert("Userinfo", null, contentValues);
+        contentValues.clear();
+//        sqLiteDatabase.execSQL("drop table Home");
+        //Создание таблицы для хранения списка комнат.
+        sqLiteDatabase.execSQL("create table if not exists home"
+                + " ("
+                + "id integer primary key autoincrement,"
+                + "Homename text,"
+                + "Roomname text,"
+                + "Datetime text"
+                + ");");
+        mqttService = MQTTService.getMqttServiceInstance();
+        mqttService.setMQTTServiceParameters(mqttLogin, mqttPassword, MainActivity.this);
+        mqttService.connectMQTTServer();
     }
 
     public String getTime(){
@@ -280,14 +241,21 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     public void connectMqtt(SQLiteDatabase sqLiteDatabase){
-        Cursor cursor = sqLiteDatabase.query("userInfo", null, null, null, null, null, null);
+        Cursor cursor = sqLiteDatabase.query("Userinfo", null, null, null, null, null, null);
         int loginColIndex = cursor.getColumnIndex("Username");
         int passwordColIndex = cursor.getColumnIndex("Password");
-        Log.d(LOG_TAG, "login = " + cursor.getString(loginColIndex));
-        Log.d(LOG_TAG, "password = " + cursor.getString(passwordColIndex));
-        mqttService = MQTTService.getMqttServiceInstance();
-        mqttService.setMQTTServiceParameters(cursor.getString(loginColIndex), cursor.getString(passwordColIndex),
-                this);
+        Log.d(LOG_TAG, "loginColIndex = " + loginColIndex);
+        Log.d(LOG_TAG, "passwordColIndex = " + passwordColIndex);
+        if(cursor.moveToFirst()) {
+            Log.d(LOG_TAG, "login = " + cursor.getString(loginColIndex));
+            Log.d(LOG_TAG, "password = " + cursor.getString(passwordColIndex));
+            mqttService = MQTTService.getMqttServiceInstance();
+            mqttService.setMQTTServiceParameters(cursor.getString(loginColIndex), cursor.getString(passwordColIndex),
+                    this);
+            mqttService.connectMQTTServer();
+        } else{
+            Log.d(LOG_TAG, "cursor is empty");
+        }
         cursor.close();
     }
 

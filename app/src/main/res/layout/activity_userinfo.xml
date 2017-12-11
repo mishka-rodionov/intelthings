@@ -26,9 +26,9 @@
         android:layout_below="@+id/logintv"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:hint="login"
         android:layout_alignRight="@+id/mqttPassword"
-        android:layout_alignEnd="@+id/mqttPassword" />
+        android:layout_alignEnd="@+id/mqttPassword"
+        android:text="pavgnvtr"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -37,7 +37,6 @@
         android:text="Password mqtt-broker"
         android:id="@+id/passwordtv"
         android:layout_below="@+id/mqttLogin"
-        android:hint="password"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -49,7 +48,8 @@
         android:id="@+id/mqttPassword"
         android:layout_below="@+id/passwordtv"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:text="fpvVr7L5Ke3y"/>
 
     <Button
         android:layout_width="wrap_content"
