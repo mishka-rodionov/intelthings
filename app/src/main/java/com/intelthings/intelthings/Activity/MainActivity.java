@@ -57,8 +57,22 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     @Override
     protected void onRestart() {
         super.onRestart();
-        Intent intent = getIntent();
+        viewArrayList.clear();
+        dynamicLinearlayout.removeAllViews();
+        checkFirstRun();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        checkFirstRun();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        representView();
+//        checkFirstRun();
     }
 
     @Override
@@ -127,11 +141,13 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     //и если оно существует, то происходит обычный запуск, без начальных инициализаций.
     private void checkFirstRun() {
 
-        final String PREFS_NAME = "MyPrefsFile39";
+        final String PREFS_NAME = "MyPrefsFile26";
         final String PREF_VERSION_CODE_KEY = "version_code";
         final int DOESNT_EXIST = -2;
         final int currentVersionCode = BuildConfig.VERSION_CODE;
         final SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        viewArrayList.clear();
+        dynamicLinearlayout.removeAllViews();
 
         // Получение текущей версии кода
         Log.d(LOG_TAG, "currentVersionCode = " + currentVersionCode);
@@ -153,34 +169,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 e.printStackTrace();
             }
 
-            Cursor cursor = sqLiteDatabase.query("home", null, null, null, null, null, null);
-            if (cursor.moveToFirst()){
-                int roomNameColIndex = cursor.getColumnIndex("Roomname");
-                Log.d(LOG_TAG, "roomNameColIndex = " + roomNameColIndex);
-                Log.d(LOG_TAG, "value = " + cursor.getString(roomNameColIndex));
-                do {
-                    roomName.add(cursor.getString(roomNameColIndex));
-                    Log.d(LOG_TAG, cursor.getString(roomNameColIndex));
-                }while (cursor.moveToNext());
-            }else{
-                Log.d(LOG_TAG, "0 rows in table home");
-            }
-            for (int i = 0; i < roomName.size(); i++) {
-                View roomView = getLayoutInflater().inflate(R.layout.room_view, null);
-                final TextView roomnameTV = (TextView) roomView.findViewById(R.id.roomnameTV);
-                Button openButton = (Button) roomView.findViewById(R.id.openBtn);
-                openButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
-                        roomActivityIntent.putExtra("tableName", roomnameTV.getText().toString());
-                        startActivity(roomActivityIntent);
-                    }
-                });
-                roomnameTV.setText(roomName.get(i));
-                viewArrayList.add(roomView);
-                dynamicLinearlayout.addView(roomView);
-            }
+
 
             return;
         } else if (savedVersionCode == DOESNT_EXIST) {
@@ -242,6 +231,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         mqttService = MQTTService.getMqttServiceInstance();
         mqttService.setMQTTServiceParameters(mqttLogin, mqttPassword, MainActivity.this);
         mqttService.connectMQTTServer();
+
+        representView();
     }
 
     public String getTime(){
@@ -251,6 +242,40 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 + Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + ":"
                 + Calendar.getInstance().get(Calendar.MINUTE) + ":"
                 + Calendar.getInstance().get(Calendar.SECOND);
+    }
+
+    public void representView() {
+        Cursor cursor = sqLiteDatabase.query("home", null, null, null, null, null, null);
+        viewArrayList.clear();
+        dynamicLinearlayout.removeAllViews();
+        roomName.clear();
+        if (cursor.moveToFirst()) {
+            int roomNameColIndex = cursor.getColumnIndex("Roomname");
+            Log.d(LOG_TAG, "roomNameColIndex = " + roomNameColIndex);
+            Log.d(LOG_TAG, "value = " + cursor.getString(roomNameColIndex));
+            do {
+                roomName.add(cursor.getString(roomNameColIndex));
+                Log.d(LOG_TAG, cursor.getString(roomNameColIndex));
+            } while (cursor.moveToNext());
+        } else {
+            Log.d(LOG_TAG, "0 rows in table home");
+        }
+        for (int i = 0; i < roomName.size(); i++) {
+            View roomView = getLayoutInflater().inflate(R.layout.room_view, null);
+            final TextView roomnameTV = (TextView) roomView.findViewById(R.id.roomnameTV);
+            Button openButton = (Button) roomView.findViewById(R.id.openBtn);
+            openButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
+                    roomActivityIntent.putExtra("tableName", roomnameTV.getText().toString());
+                    startActivity(roomActivityIntent);
+                }
+            });
+            roomnameTV.setText(roomName.get(i));
+            viewArrayList.add(roomView);
+            dynamicLinearlayout.addView(roomView);
+        }
     }
 
     public void connectMqtt(SQLiteDatabase sqLiteDatabase){

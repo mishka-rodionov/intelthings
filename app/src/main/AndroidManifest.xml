@@ -31,7 +31,8 @@
         <activity
             android:name=".Activity.RoomActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".Activity.UserinfoActivity"></activity>
+        <activity android:name=".Activity.UserinfoActivity" />
+        <activity android:name=".Activity.DeviceinfoActivity"></activity>
     </application>
 
 </manifest>
