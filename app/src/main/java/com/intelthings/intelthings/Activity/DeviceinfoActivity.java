@@ -31,6 +31,7 @@ public class DeviceinfoActivity extends AppCompatActivity implements View.OnClic
                 String tableName = intent.getStringExtra("tableName");
                 Log.d(LOG_TAG, "tableName = " + tableName);
                 intent.putExtra("deviceName", deviceNameEdttxt.getText().toString());
+                intent.putExtra("deviceID", deviceIdEdttxt.getText().toString());
                 intent.putExtra("tableName", tableName);
                 setResult(RESULT_OK, intent);
                 finish();

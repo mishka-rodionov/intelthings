@@ -18,7 +18,7 @@ public class SettingActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.setting_activity);
+        setContentView(R.layout.activity_setting);
 
         mqttService = MQTTService.getMqttServiceInstance();
         usernameEditText = (EditText) findViewById(R.id.usernameEdtTxt);                    //Инициализация текстового поля юзернэйма
