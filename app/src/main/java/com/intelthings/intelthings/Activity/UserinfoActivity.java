@@ -3,6 +3,7 @@ package com.intelthings.intelthings.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +15,7 @@ public class UserinfoActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "inside onCreateUserInfoActivity");
         setContentView(R.layout.activity_userinfo);
         editTextMqttLogin = (EditText) findViewById(R.id.mqttLogin);
         editTextMqttPassword = (EditText) findViewById(R.id.mqttPassword);
@@ -40,4 +42,5 @@ public class UserinfoActivity extends AppCompatActivity implements View.OnClickL
     private EditText editTextMqttPassword;
     private Button cancelButton;
     private Button okButton;
+    private String LOG_TAG = "myApp";
 }

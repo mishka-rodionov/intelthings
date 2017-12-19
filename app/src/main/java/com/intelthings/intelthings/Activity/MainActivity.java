@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "inside onCreate");
         setContentView(R.layout.activity_main);
         sqLiteDatabase = dbManager.getWritableDatabase();
         roomName = new ArrayList<String>();
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     @Override
     protected void onRestart() {
         super.onRestart();
+        Log.d(LOG_TAG, "inside onRestart");
         viewArrayList.clear();
         dynamicLinearlayout.removeAllViews();
         checkFirstRun();
@@ -65,13 +67,24 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(LOG_TAG, "inside onStart");
 //        checkFirstRun();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        representView();
+        Log.d(LOG_TAG, "inside onResume");
+        final int currentVersionCode = BuildConfig.VERSION_CODE;
+        final int DOESNT_EXIST = -2;
+        final SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        final String PREF_VERSION_CODE_KEY = "version_code";
+        int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, DOESNT_EXIST);
+        if (currentVersionCode == savedVersionCode) {
+            //representView();
+        }else{
+            return;
+        }
 //        checkFirstRun();
     }
 
@@ -141,7 +154,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     //и если оно существует, то происходит обычный запуск, без начальных инициализаций.
     private void checkFirstRun() {
 
-        final String PREFS_NAME = "MyPrefsFile26";
+        Log.d(LOG_TAG, "inside onCheckFirstRun");
+
         final String PREF_VERSION_CODE_KEY = "version_code";
         final int DOESNT_EXIST = -2;
         final int currentVersionCode = BuildConfig.VERSION_CODE;
@@ -169,7 +183,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 e.printStackTrace();
             }
 
-
+            representView();
 
             return;
         } else if (savedVersionCode == DOESNT_EXIST) {
@@ -196,6 +210,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Log.d(LOG_TAG, "inside onActivityResult");
 
 //        sqLiteDatabase.execSQL("drop table Userinfo");      //Используется для тестирования первого входа
         String mqttLogin;
@@ -232,7 +247,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         mqttService.setMQTTServiceParameters(mqttLogin, mqttPassword, MainActivity.this);
         mqttService.connectMQTTServer();
 
-        representView();
+//        representView();
     }
 
     public String getTime(){
@@ -245,6 +260,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     public void representView() {
+        Log.d(LOG_TAG, "inside representView");
         Cursor cursor = sqLiteDatabase.query("home", null, null, null, null, null, null);
         viewArrayList.clear();
         dynamicLinearlayout.removeAllViews();
@@ -297,6 +313,24 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         cursor.close();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(LOG_TAG, "inside onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "inside onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(LOG_TAG, "inside onDestroy");
+    }
+
     private Home home;
     private HashMap<String, RoomActivity> roomActivityHashMap;
     private FloatingActionButton addRooms;
@@ -310,5 +344,6 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     private MQTTService mqttService;
     private ArrayList<View> viewArrayList;
     private LinearLayout dynamicLinearlayout;
+    final String PREFS_NAME = "MyPrefsFile26";
 
 }
