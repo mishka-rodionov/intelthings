@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 connectMqtt(sqLiteDatabase);
             } catch (Exception e) {
                 Log.d(LOG_TAG, "Exeption in connectMqtt");
-                e.printStackTrace();
+                e.printStackTrace(System.out);
             }
 
             representView();
@@ -305,15 +305,15 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         if(cursor.moveToFirst()) {
             Log.d(LOG_TAG, "login = " + cursor.getString(loginColIndex));
             Log.d(LOG_TAG, "password = " + cursor.getString(passwordColIndex));
-//            if(new MqttService().isConnected(cursor.getString(loginColIndex))){
-//                Log.d(LOG_TAG, "connecting to mqtt server");
-                mqttService = MQTTService.getMqttServiceInstance();
-                mqttService.setMQTTServiceParameters(cursor.getString(loginColIndex), cursor.getString(passwordColIndex),
-                        this);
+            mqttService = MQTTService.getMqttServiceInstance();
+            mqttService.setMQTTServiceParameters(cursor.getString(loginColIndex), cursor.getString(passwordColIndex),
+                    this);
+            if(new MqttAndroidClient(MainActivity.this, mqttService.getMqttBrokerURL(), cursor.getString(loginColIndex)).isConnected()){
+                Log.d(LOG_TAG, "connecting to mqtt server");
                 mqttService.connectMQTTServer();
-//            }else{
-//                Log.d(LOG_TAG, "alawys connect to mqtt server");
-//            }
+            }else{
+                Log.d(LOG_TAG, "alawys connect to mqtt server");
+            }
         } else{
             Log.d(LOG_TAG, "cursor is empty");
         }
