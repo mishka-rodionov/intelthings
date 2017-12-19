@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/IntelThings.iml" filepath="$PROJECT_DIR$/IntelThings.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intelthings.iml" filepath="$PROJECT_DIR$/intelthings.iml" />
     </modules>
   </component>
 </project>

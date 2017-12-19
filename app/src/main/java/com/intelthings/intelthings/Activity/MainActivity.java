@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import org.eclipse.paho.android.service.*;
+
 public class MainActivity extends AppCompatActivity  implements View.OnClickListener{
 
     @Override
@@ -176,9 +178,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         if (currentVersionCode == savedVersionCode) {
             // При выполнении данного условия происходит обычная загрузка приложения
             Log.d(LOG_TAG, "currentVersionCode == savedVersionCode");
-            try{
+            try {
                 connectMqtt(sqLiteDatabase);
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.d(LOG_TAG, "Exeption in connectMqtt");
                 e.printStackTrace();
             }
@@ -303,10 +305,15 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         if(cursor.moveToFirst()) {
             Log.d(LOG_TAG, "login = " + cursor.getString(loginColIndex));
             Log.d(LOG_TAG, "password = " + cursor.getString(passwordColIndex));
-            mqttService = MQTTService.getMqttServiceInstance();
-            mqttService.setMQTTServiceParameters(cursor.getString(loginColIndex), cursor.getString(passwordColIndex),
-                    this);
-            mqttService.connectMQTTServer();
+//            if(new MqttService().isConnected(cursor.getString(loginColIndex))){
+//                Log.d(LOG_TAG, "connecting to mqtt server");
+                mqttService = MQTTService.getMqttServiceInstance();
+                mqttService.setMQTTServiceParameters(cursor.getString(loginColIndex), cursor.getString(passwordColIndex),
+                        this);
+                mqttService.connectMQTTServer();
+//            }else{
+//                Log.d(LOG_TAG, "alawys connect to mqtt server");
+//            }
         } else{
             Log.d(LOG_TAG, "cursor is empty");
         }
