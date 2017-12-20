@@ -16,10 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.intelthings.intelthings.Logic.Home;
@@ -43,8 +45,11 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         sqLiteDatabase = dbManager.getWritableDatabase();
         roomName = new ArrayList<String>();
         viewArrayList = new ArrayList<View>();
-        dynamicLinearlayout = (LinearLayout) findViewById(R.id.mainlinearlayout);
-
+//        dynamicLinearlayout = (LinearLayout) findViewById(R.id.mainlinearlayout);
+        roomListView = (ListView) findViewById(R.id.roomListView);
+//        String[] catNames = getResources().getStringArray(R.array.cat_names);
+        roomListViewAdapter = new ArrayAdapter<String>(this, R.layout.room_view);
+        roomListView.setAdapter(roomListViewAdapter);
         checkFirstRun();
 
         roomActivityHashMap = new HashMap<String, RoomActivity>();
@@ -62,7 +67,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         super.onRestart();
         Log.d(LOG_TAG, "inside onRestart");
         viewArrayList.clear();
-        dynamicLinearlayout.removeAllViews();
+//        dynamicLinearlayout.removeAllViews();
         checkFirstRun();
     }
 
@@ -145,9 +150,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 builder.show();
                 //******************************************************************************
                 break;
-            case R.id.openBtn:
-
-                break;
+//            case R.id.openBtn:
+//
+//                break;
         }
     }
 
@@ -163,7 +168,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         final int currentVersionCode = BuildConfig.VERSION_CODE;
         final SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         viewArrayList.clear();
-        dynamicLinearlayout.removeAllViews();
+//        dynamicLinearlayout.removeAllViews();
 
         // Получение текущей версии кода
         Log.d(LOG_TAG, "currentVersionCode = " + currentVersionCode);
@@ -271,7 +276,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         Log.d(LOG_TAG, "inside representView");
         Cursor cursor = sqLiteDatabase.query("home", null, null, null, null, null, null);
         viewArrayList.clear();
-        dynamicLinearlayout.removeAllViews();
+//        dynamicLinearlayout.removeAllViews();
         roomName.clear();
         if (cursor.moveToFirst()) {
             int roomNameColIndex = cursor.getColumnIndex("Roomname");
@@ -285,21 +290,29 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             Log.d(LOG_TAG, "0 rows in table home");
         }
         for (int i = 0; i < roomName.size(); i++) {
-            View roomView = getLayoutInflater().inflate(R.layout.room_view, null);
-            final TextView roomnameTV = (TextView) roomView.findViewById(R.id.roomnameTV);
-            Button openButton = (Button) roomView.findViewById(R.id.openBtn);
-            openButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
-                    roomActivityIntent.putExtra("tableName", roomnameTV.getText().toString());
-                    startActivity(roomActivityIntent);
-                }
-            });
-            roomnameTV.setText(roomName.get(i));
-            viewArrayList.add(roomView);
-            dynamicLinearlayout.addView(roomView);
+            Log.d(LOG_TAG, roomName.get(i));
         }
+        roomListViewAdapter.clear();
+        roomListViewAdapter.addAll(roomName);
+        //****************
+//        for (int i = 0; i < roomName.size(); i++) {
+//            View roomView = getLayoutInflater().inflate(R.layout.room_view, null);
+//            final TextView roomnameTV = (TextView) roomView.findViewById(R.id.roomnameTV);
+//            Button openButton = (Button) roomView.findViewById(R.id.openBtn);
+//            openButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
+//                    roomActivityIntent.putExtra("tableName", roomnameTV.getText().toString());
+//                    startActivity(roomActivityIntent);
+//                }
+//            });
+//            roomnameTV.setText(roomName.get(i));
+//            viewArrayList.add(roomView);
+//            dynamicLinearlayout.addView(roomView);
+//        }
+        //*****************
+
     }
 
     public void connectMqtt(SQLiteDatabase sqLiteDatabase){
@@ -357,6 +370,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     private MQTTService mqttService;
     private ArrayList<View> viewArrayList;
     private LinearLayout dynamicLinearlayout;
+    private ListView roomListView;
+    private ArrayAdapter<String> roomListViewAdapter;
     final String PREFS_NAME = "MyPrefsFile26";
 
 }
