@@ -76,39 +76,48 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String deviceName;
-        String roomTableName;
-        if(data == null){
-            return;
-        }else{
-            deviceName = data.getStringExtra("deviceName");
-            roomTableName = data.getStringExtra("tableName");
-        }
 
-        sqLiteDatabase.execSQL("create table if not exists light" + deviceName
-                + " ("
-                + "id integer primary key autoincrement,"
-                + "name text,"
-                + "state text,"
-                + "stateOS text,"
-                + "temperature real,"
-                + "date_time text,"
-                + "FK integer"+ ");");
+        if(resultCode == RESULT_OK) {
+            if(data.getStringExtra("buttonClick").equals("OK")) {
+                Log.d(LOG_TAG, "press OK");
+                String deviceName;
+                String roomTableName;
+                if (data == null) {
+                    return;
+                } else {
+                    deviceName = data.getStringExtra("deviceName");
+                    roomTableName = data.getStringExtra("tableName");
+                }
+
+                sqLiteDatabase.execSQL("create table if not exists light" + deviceName
+                        + " ("
+                        + "id integer primary key autoincrement,"
+                        + "name text,"
+                        + "state text,"
+                        + "stateOS text,"
+                        + "temperature real,"
+                        + "date_time text,"
+                        + "FK integer" + ");");
 
 //                        light.setName(input.getText().toString());
 //                        textView.setText(input.getText().toString());
 
-        contentValues.put("name", deviceName);
-        Log.d(LOG_TAG, "roomname = " + roomTableName);
-        cvRoomTable.put("Roomname", roomTableName);
-        cvRoomTable.put("DeviceType", "light");
-        cvRoomTable.put("DeviceName", deviceName);
-        cvRoomTable.put("Datetime", getTime());
+                contentValues.put("name", deviceName);
+                Log.d(LOG_TAG, "roomname = " + roomTableName);
+                cvRoomTable.put("Roomname", roomTableName);
+                cvRoomTable.put("DeviceType", "light");
+                cvRoomTable.put("DeviceName", deviceName);
+                cvRoomTable.put("Datetime", getTime());
 
-        sqLiteDatabase.insert(roomTableName, null, cvRoomTable);
-        cvRoomTable.clear();
+                sqLiteDatabase.insert(roomTableName, null, cvRoomTable);
+                cvRoomTable.clear();
+                representView(sqLiteDatabase, deviceName);
+            }else if(data.getStringExtra("buttonClick").equals("Cancel")){
+                Log.d(LOG_TAG, "press cancel");
+            }
+        }
 
-        representView(sqLiteDatabase,deviceName);
+
     }
 
     @Override

@@ -22,6 +22,7 @@ public class UserinfoActivity extends AppCompatActivity implements View.OnClickL
         cancelButton = (Button) findViewById(R.id.cancelButton);
         okButton = (Button) findViewById(R.id.okButton);
         okButton.setOnClickListener(this);
+        cancelButton.setOnClickListener(this);
 
     }
 
@@ -30,9 +31,16 @@ public class UserinfoActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()){
             case R.id.okButton:
                 Intent intent = new Intent();
+                intent.putExtra("buttonClick", "OK");
                 intent.putExtra("mqttLogin", editTextMqttLogin.getText().toString());
                 intent.putExtra("mqttPassword", editTextMqttPassword.getText().toString());
                 setResult(RESULT_OK, intent);
+                finish();
+                break;
+            case R.id.cancelButton:
+                Intent intentCancel = getIntent();
+                intentCancel.putExtra("buttonClick", "Cancel");
+                setResult(RESULT_OK,intentCancel);
                 finish();
                 break;
         }

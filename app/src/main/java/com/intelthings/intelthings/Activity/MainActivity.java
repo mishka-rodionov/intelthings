@@ -214,41 +214,47 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
         Log.d(LOG_TAG, "inside onActivityResult");
 
+        if(resultCode == RESULT_OK) {
+            if(data.getStringExtra("buttonClick").equals("OK")) {
+                Log.d(LOG_TAG, "press OK");
 //        sqLiteDatabase.execSQL("drop table Userinfo");      //Используется для тестирования первого входа
-        String mqttLogin;
-        String mqttPassword;
-        if(data == null){
-            return;
-        }else{
-            mqttLogin = data.getStringExtra("mqttLogin");
-            mqttPassword = data.getStringExtra("mqttPassword");
-        }
-        //Создание таблицы для пользовательской информации (логин и пароль).
-        sqLiteDatabase.execSQL("create table if not exists Userinfo"
-                + " ("
-                + "id integer primary key autoincrement,"
-                + "Username text,"
-                + "Password text,"
-                + "Datetime text"
-                + ");");
-        contentValues.put("Username", mqttLogin);
-        contentValues.put("Password", mqttPassword);
-        contentValues.put("Datetime", getTime());
-        sqLiteDatabase.insert("Userinfo", null, contentValues);
-        contentValues.clear();
+                String mqttLogin;
+                String mqttPassword;
+                if (data == null) {
+                    return;
+                } else {
+                    mqttLogin = data.getStringExtra("mqttLogin");
+                    mqttPassword = data.getStringExtra("mqttPassword");
+                }
+                //Создание таблицы для пользовательской информации (логин и пароль).
+                sqLiteDatabase.execSQL("create table if not exists Userinfo"
+                        + " ("
+                        + "id integer primary key autoincrement,"
+                        + "Username text,"
+                        + "Password text,"
+                        + "Datetime text"
+                        + ");");
+                contentValues.put("Username", mqttLogin);
+                contentValues.put("Password", mqttPassword);
+                contentValues.put("Datetime", getTime());
+                sqLiteDatabase.insert("Userinfo", null, contentValues);
+                contentValues.clear();
 //        sqLiteDatabase.execSQL("drop table Home");
-        //Создание таблицы для хранения списка комнат.
-        sqLiteDatabase.execSQL("create table if not exists home"
-                + " ("
-                + "id integer primary key autoincrement,"
-                + "Homename text,"
-                + "Roomname text,"
-                + "Datetime text"
-                + ");");
-        mqttService = MQTTService.getMqttServiceInstance();
-        mqttService.setMQTTServiceParameters(mqttLogin, mqttPassword, MainActivity.this);
-        mqttService.connectMQTTServer();
-
+                //Создание таблицы для хранения списка комнат.
+                sqLiteDatabase.execSQL("create table if not exists home"
+                        + " ("
+                        + "id integer primary key autoincrement,"
+                        + "Homename text,"
+                        + "Roomname text,"
+                        + "Datetime text"
+                        + ");");
+                mqttService = MQTTService.getMqttServiceInstance();
+                mqttService.setMQTTServiceParameters(mqttLogin, mqttPassword, MainActivity.this);
+                mqttService.connectMQTTServer();
+            }else if(data.getStringExtra("buttonClick").equals("Cancel")){
+                Log.d(LOG_TAG, "press cancel");
+            }
+        }
 //        representView();
     }
 

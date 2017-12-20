@@ -21,6 +21,7 @@ public class DeviceinfoActivity extends AppCompatActivity implements View.OnClic
         okDeviceButton = (Button) findViewById(R.id.okDeviceButton);
         cancelDeviceButton = (Button) findViewById(R.id.cancelDeviceButton);
         okDeviceButton.setOnClickListener(this);
+        cancelDeviceButton.setOnClickListener(this);
     }
 
     @Override
@@ -30,10 +31,17 @@ public class DeviceinfoActivity extends AppCompatActivity implements View.OnClic
                 Intent intent = getIntent();
                 String tableName = intent.getStringExtra("tableName");
                 Log.d(LOG_TAG, "tableName = " + tableName);
+                intent.putExtra("buttonClick", "OK");
                 intent.putExtra("deviceName", deviceNameEdttxt.getText().toString());
                 intent.putExtra("deviceID", deviceIdEdttxt.getText().toString());
                 intent.putExtra("tableName", tableName);
                 setResult(RESULT_OK, intent);
+                finish();
+                break;
+            case R.id.cancelDeviceButton:
+                Intent intentCancel = getIntent();
+                intentCancel.putExtra("buttonClick", "Cancel");
+                setResult(RESULT_OK,intentCancel);
                 finish();
                 break;
         }
