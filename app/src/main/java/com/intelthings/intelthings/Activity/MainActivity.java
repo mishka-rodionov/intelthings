@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 //Создание пользовательского диалогового окна, с полем ввода имени устройства и
                 //с кнопками подтверждения и отмены операции.
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Enter the name");
+                builder.setTitle("Введите название комнаты!");
                 // I'm using fragment here so I'm using getView() to provide ViewGroup
                 // but you can provide here any other instance of ViewGroup from your Fragment / Activity
                 View viewInflated = LayoutInflater.from(this).inflate(R.layout.room_dialog_layout,
@@ -294,6 +295,15 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         }
         roomListViewAdapter.clear();
         roomListViewAdapter.addAll(roomName);
+        roomListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
+                Log.d(LOG_TAG, "table name = " + parent.getChildAt(position).toString());
+                roomActivityIntent.putExtra("tableName", roomName.get(position));
+                startActivity(roomActivityIntent);
+            }
+        });
         //****************
 //        for (int i = 0; i < roomName.size(); i++) {
 //            View roomView = getLayoutInflater().inflate(R.layout.room_view, null);
@@ -328,10 +338,11 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             mqttService.setMQTTServiceParameters(cursor.getString(loginColIndex), cursor.getString(passwordColIndex),
                     this);
             if(new MqttAndroidClient(MainActivity.this, mqttService.getMqttBrokerURL(), cursor.getString(loginColIndex)).isConnected()){
+                Log.d(LOG_TAG, "alawys connect to mqtt server");
+            }else{
                 Log.d(LOG_TAG, "connecting to mqtt server");
                 mqttService.connectMQTTServer();
-            }else{
-                Log.d(LOG_TAG, "alawys connect to mqtt server");
+
             }
         } else{
             Log.d(LOG_TAG, "cursor is empty");
