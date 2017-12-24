@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 //        dynamicLinearlayout = (LinearLayout) findViewById(R.id.mainlinearlayout);
         roomListView = (ListView) findViewById(R.id.roomListView);
 //        String[] catNames = getResources().getStringArray(R.array.cat_names);
-        roomListViewAdapter = new ArrayAdapter<String>(this, R.layout.room_view);
+        roomListViewAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         roomListView.setAdapter(roomListViewAdapter);
         checkFirstRun();
 
@@ -299,11 +299,21 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
-                Log.d(LOG_TAG, "table name = " + parent.getChildAt(position).toString());
+                Log.d(LOG_TAG, "table name = " + roomName.get(position));
                 roomActivityIntent.putExtra("tableName", roomName.get(position));
                 startActivity(roomActivityIntent);
             }
         });
+//        roomListView.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View view) {
+//                Intent roomActivityIntent = new Intent(MainActivity.this, RoomActivity.class);
+//                Log.d(LOG_TAG, "table name = " + parent.getChildAt(position).toString());
+//                roomActivityIntent.putExtra("tableName", roomName.get(position));
+//                startActivity(roomActivityIntent);
+//            }
+//        });
         //****************
 //        for (int i = 0; i < roomName.size(); i++) {
 //            View roomView = getLayoutInflater().inflate(R.layout.room_view, null);
