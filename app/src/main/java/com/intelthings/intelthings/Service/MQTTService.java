@@ -2,6 +2,8 @@ package com.intelthings.intelthings.Service;
 
 import android.app.Activity;
 import android.app.Application;
+import android.util.Log;
+import android.widget.Toast;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -111,17 +113,17 @@ public class MQTTService extends Application implements MqttCallback {
     }
 
     //Метод для подписки на топик
-    public void subscribeToTopic(){
+    public void subscribeToTopic(String topic){
         try {
-            getClient().subscribe("recieveTopic", 0, null, new IMqttActionListener() {
+            getClient().subscribe(topic, 0, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    System.out.println("Subscribed!");
+                    Log.d(LOG_TAG, "Subscribed!");
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    System.out.println("Failed to subscribe");
+                    Log.d(LOG_TAG, "Failed to subscribe");
                 }
             });
         } catch (MqttException ex){
@@ -137,7 +139,8 @@ public class MQTTService extends Application implements MqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        System.out.println("Subscribe payload = " + message);
+        Log.d(LOG_TAG, "Recieve topic = " + topic + ", " +  "Subscribe payload = " + message);
+        Toast.makeText(MQTTService.this, "Subscribe payload = " + message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -235,5 +238,6 @@ public class MQTTService extends Application implements MqttCallback {
     private MqttAndroidClient client;
     private MqttConnectOptions options;
     private static MQTTService mqttServiceInstance;
+    private String LOG_TAG = "myApp";
 
 }

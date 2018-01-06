@@ -53,7 +53,7 @@ public class SettingActivity extends AppCompatActivity{
                         break;
                     case R.id.subscribeBtn:
                         try{
-                            mqttService.subscribeToTopic();
+                            mqttService.subscribeToTopic("recieve topic");
                         }catch (Exception e){
                             e.printStackTrace();
                             System.out.println("trouble to subscribe");

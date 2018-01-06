@@ -16,11 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activity.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
@@ -32,7 +28,17 @@
             android:name=".Activity.RoomActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".Activity.UserinfoActivity" />
-        <activity android:name=".Activity.DeviceinfoActivity"></activity>
+        <activity android:name=".Activity.DeviceinfoActivity" />
+        <activity
+            android:name=".Activity.NavigationActivity"
+            android:label="@string/title_activity_navigation_activivty"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

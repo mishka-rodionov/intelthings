@@ -36,6 +36,8 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room);
 
+        mqttService = MQTTService.getMqttServiceInstance();
+
         Intent mainActivityIntent = getIntent();
         DatabaseManager dbManager = new DatabaseManager(this);
 
@@ -165,6 +167,13 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         ImageButton clearBtn = (ImageButton) view.findViewById(R.id.clearBtn);
+        clearBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mqttService.subscribeToTopic(light.getName());
+                Log.d(LOG_TAG, "Subscribe to topic" + light.getName());
+            }
+        });
         ImageButton buildBtn = (ImageButton) view.findViewById(R.id.buildBtn);
         buildBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -310,6 +319,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     private final ContentValues contentValues = new ContentValues();
     private ArrayList<String> roomNames;
     private SQLiteDatabase sqLiteDatabase;
+    private MQTTService mqttService;
 
 
 }
